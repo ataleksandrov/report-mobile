@@ -10,18 +10,20 @@ interface ReportListProps {
 
 const styles = StyleSheet.create({
   margin: {
-    marginBottom: 16,
+    // marginBottom: 16,
   },
 });
 
-export default function ReportList({reports, style}: ReportListProps) {
+export default function ReportList({reports}: ReportListProps) {
   return (
-    <View style={style}>
-      {reports.map(report => (
-        <View key={report.reportId} style={styles.margin}>
-          <ReportCard report={report} />
-        </View>
-      ))}
+    <View style={{marginTop: 4}}>
+      {reports
+        .filter(x => x.visible === true)
+        .map(report => (
+          <View key={report.reportId} style={styles.margin}>
+            <ReportCard report={report} />
+          </View>
+        ))}
     </View>
   );
 }
