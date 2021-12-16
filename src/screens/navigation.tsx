@@ -1,9 +1,9 @@
 import React from 'react';
-import {StyleSheet} from 'react-native';
 import {createMaterialBottomTabNavigator} from '@react-navigation/material-bottom-tabs';
 
 import HomeScreen from './home';
 import ReportScreen from './report';
+import MobileMap from './map';
 
 const Navigation = () => {
   const User = createMaterialBottomTabNavigator();
@@ -15,7 +15,8 @@ const Navigation = () => {
       activeColor="#000000"
       barStyle={{backgroundColor: '#0a798d'}}
       shifting
-      sceneAnimationEnabled={false}>
+      sceneAnimationEnabled={false}
+      style={{flex: 1, flexDirection: 'column'}}>
       <User.Screen
         name="Home"
         component={HomeScreen}
@@ -23,13 +24,13 @@ const Navigation = () => {
           tabBarIcon: 'home',
         }}
       />
-      {/* <User.Screen
+      <User.Screen
         name="Map"
         component={MobileMap}
         options={{
           tabBarIcon: 'map-marker',
         }}
-      /> */}
+      />
       <User.Screen
         name="Add"
         component={ReportScreen}
@@ -40,13 +41,5 @@ const Navigation = () => {
     </User.Navigator>
   );
 };
-
-const styles = StyleSheet.create({
-  mainView: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
 
 export default Navigation;

@@ -10,13 +10,14 @@ interface ReportListProps {
 
 const styles = StyleSheet.create({
   margin: {
-    marginBottom: 16,
+    // marginBottom: 16,
   },
 });
 
-export default function ReportList({reports, style}: ReportListProps) {
+export default function ReportList({reports}: ReportListProps) {
+  console.log('rerendering:');
   return (
-    <View style={style}>
+    <View style={{marginTop: 4}}>
       {reports.map(report => (
         <View key={report.reportId} style={styles.margin}>
           <ReportCard report={report} />

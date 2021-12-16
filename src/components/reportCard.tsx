@@ -9,23 +9,31 @@ interface ReportCardProps {
 }
 
 const styles = StyleSheet.create({
-  cardContainer: {backgroundColor: 'white', opacity: 0.95},
+  cardContainer: {
+    backgroundColor: '#f0f8ff',
+    opacity: 0.95,
+    borderColor: '#9dddee',
+    borderWidth: 4,
+    borderRadius: 10,
+  },
 });
 
 export function ReportCard({report}: ReportCardProps) {
   const {navigate} = useNavigation();
-
   return (
     <Card
       elevation={5}
       style={styles.cardContainer}
       onPress={() => navigate('ReportDetails', report)}>
-      {/* <Card.Cover
+      <Card.Cover
         source={{
-          uri: report.coverPhoto,
+          uri: report.photos[0],
         }}
-      /> */}
-      <Card.Title title={report.title} subtitle={report.date} />
+      />
+      <Card.Title
+        title={report.title}
+        subtitle={report.date + ' ' + report.level}
+      />
     </Card>
   );
 }
