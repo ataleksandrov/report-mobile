@@ -15,15 +15,14 @@ const styles = StyleSheet.create({
 });
 
 export default function ReportList({reports}: ReportListProps) {
+  console.log('rerendering:');
   return (
     <View style={{marginTop: 4}}>
-      {reports
-        .filter(x => x.visible === true)
-        .map(report => (
-          <View key={report.reportId} style={styles.margin}>
-            <ReportCard report={report} />
-          </View>
-        ))}
+      {reports.map(report => (
+        <View key={report.reportId} style={styles.margin}>
+          <ReportCard report={report} />
+        </View>
+      ))}
     </View>
   );
 }

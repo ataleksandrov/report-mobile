@@ -30,7 +30,10 @@ export function ReportCard({report}: ReportCardProps) {
           uri: report.photos[0],
         }}
       />
-      <Card.Title title={report.title} subtitle={report.date} />
+      <Card.Title
+        title={report.title}
+        subtitle={report.date + ' ' + report.level}
+      />
     </Card>
   );
 }

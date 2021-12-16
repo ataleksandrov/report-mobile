@@ -5,6 +5,6 @@ export interface Report {
   description: string;
   photos: {}[];
   userId: string;
-  visible: boolean;
   city: string;
+  level: string;
 }

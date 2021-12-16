@@ -3,6 +3,7 @@ import {ScrollView, Text, StyleSheet, View, Button} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import ReportList from '../components/reportList';
 import Modal from 'react-native-modal';
+import DropDownPicker from 'react-native-dropdown-picker';
 
 const HomeScreen = ({navigation}) => {
   // const { data: events } = useAsync(() => client.getEvents(), []);
@@ -20,6 +21,7 @@ const HomeScreen = ({navigation}) => {
       userId: 'userId string',
       visible: true,
       city: 'Бургас',
+      level: 'low',
     },
     {
       reportId: 'id asd 2',
@@ -33,6 +35,7 @@ const HomeScreen = ({navigation}) => {
       userId: 'userId string',
       visible: true,
       city: 'Пловдив',
+      level: 'low',
     },
     {
       reportId: 'id asd 3',
@@ -46,6 +49,7 @@ const HomeScreen = ({navigation}) => {
       userId: 'userId string',
       visible: true,
       city: 'Варна',
+      level: 'high',
     },
     {
       reportId: 'id asd 4',
@@ -59,6 +63,7 @@ const HomeScreen = ({navigation}) => {
       userId: 'userId string',
       visible: true,
       city: 'София',
+      level: 'high',
     },
     {
       reportId: 'id asd 5',
@@ -72,6 +77,7 @@ const HomeScreen = ({navigation}) => {
       userId: 'userId string',
       visible: true,
       city: 'Бургас',
+      level: 'high',
     },
     {
       reportId: 'id asd 6',
@@ -85,6 +91,7 @@ const HomeScreen = ({navigation}) => {
       userId: 'userId string',
       visible: true,
       city: 'Пловдив',
+      level: 'medium',
     },
     {
       reportId: 'id asd 7',
@@ -98,6 +105,7 @@ const HomeScreen = ({navigation}) => {
       userId: 'userId string',
       visible: true,
       city: 'Варна',
+      level: 'medium',
     },
     {
       reportId: 'id asd 8',
@@ -111,6 +119,7 @@ const HomeScreen = ({navigation}) => {
       userId: 'userId string',
       visible: true,
       city: 'София',
+      level: 'medium',
     },
     {
       reportId: 'id asd 9',
@@ -124,6 +133,7 @@ const HomeScreen = ({navigation}) => {
       userId: 'userId string',
       visible: true,
       city: 'Бургас',
+      level: 'low',
     },
     {
       reportId: 'id asd 10',
@@ -137,6 +147,7 @@ const HomeScreen = ({navigation}) => {
       userId: 'userId string',
       visible: true,
       city: 'Бургас',
+      level: 'low',
     },
     {
       reportId: 'id asd 11',
@@ -150,34 +161,28 @@ const HomeScreen = ({navigation}) => {
       userId: 'userId string',
       visible: true,
       city: 'Бургас',
+      level: 'high',
     },
   ];
-  const [isModalVisible, setModalVisible] = useState(false);
+  const [isSortModalVisible, setSortModalVisible] = useState(false);
+  const [isFilterModalVisible, setFilterModalVisible] = useState(false);
+  const [isCityFilterPickerVisible, setCityFilterPickerVisible] =
+    useState(false);
+  const [isLevelFilterPickerVisible, setLevelFilterPickerVisible] =
+    useState(false);
+  const [filterCity, setFilterCity] = useState('');
+  const [filterLevel, setFilterLevel] = useState('');
+
   const [data, setData] = useState(reports);
 
-  var setAllVisible = function () {
-    var newData = [];
-    data.forEach(el => {
-      el.visible = true;
-      newData.push(el);
-    });
-    console.log('Saving new data');
-    console.log(newData);
-    setData(newData);
-  };
-
-  var setVisibleByCity = function (city: string) {
-    var newData = [];
-    data.forEach(el => {
-      if (el.city !== city) {
-        el.visible = false;
-      }
-      newData.push(el);
-    });
-    console.log('Saving by city');
-    console.log(newData);
-    setData(newData);
-  };
+  const uniqueCities = [...new Set(data.map(x => x.city))].map(x => ({
+    label: x,
+    value: x,
+  }));
+  const uniqueLevels = [...new Set(data.map(x => x.level))].map(x => ({
+    label: x,
+    value: x,
+  }));
 
   return (
     <View style={{flex: 1}}>
@@ -194,7 +199,8 @@ const HomeScreen = ({navigation}) => {
           name="filter"
           backgroundColor="#9dddee"
           onPress={() => {
-            setModalVisible(true);
+            setFilterModalVisible(true);
+            // setFilterPickerVisible(true);
           }}
           iconStyle={{marginLeft: '50%', color: 'black'}}
           style={{
@@ -210,9 +216,9 @@ const HomeScreen = ({navigation}) => {
           name="sort"
           backgroundColor="#9dddee"
           onPress={() => {
-            setModalVisible(true);
+            setSortModalVisible(true);
           }}
-          iconStyle={{ marginLeft: '50%', color: 'black' }}
+          iconStyle={{marginLeft: '50%', color: 'black'}}
           style={{
             width: 207,
             flexDirection: 'row',
@@ -224,12 +230,20 @@ const HomeScreen = ({navigation}) => {
         />
       </View>
       <ScrollView style={styles.mainView}>
-        {data && <ReportList reports={data} />}
+        {data && (
+          <ReportList
+            reports={data
+              .filter(x => filterCity === '' || x.city === filterCity)
+              .filter(x => filterLevel === '' || x.level === filterLevel)}
+          />
+        )}
+        {console.log('LOGGING ' + data.map(x => x.visible))}
       </ScrollView>
 
+      {/* sorting modal */}
       <Modal
-        isVisible={isModalVisible}
-        onBackdropPress={() => setModalVisible(false)}>
+        isVisible={isSortModalVisible}
+        onBackdropPress={() => setSortModalVisible(false)}>
         <View
           style={{
             justifyContent: 'center',
@@ -240,21 +254,114 @@ const HomeScreen = ({navigation}) => {
             title="по дата"
             style={{color: 'black'}}
             onPress={() => {
-              setModalVisible(false);
+              setSortModalVisible(false);
             }}
           />
           <Button
             title="по локация"
             onPress={() => {
-              setVisibleByCity('Бургас');
-              setModalVisible(false);
+              // setVisibleByCity('Бургас');
+              setSortModalVisible(false);
             }}
           />
           <Button
             title="изчисти"
             onPress={() => {
-              setAllVisible();
-              setModalVisible(false);
+              setFilterCity('');
+              setSortModalVisible(false);
+            }}
+          />
+        </View>
+      </Modal>
+
+      {/* filtering modal */}
+      <Modal
+        isVisible={isFilterModalVisible}
+        onBackdropPress={() => setFilterModalVisible(false)}
+        style={{flex: 1}}>
+        <View
+          style={{
+            height: 250,
+            // justifyContent: 'center',
+            // alignItems: 'center',
+            backgroundColor: '#0a798d',
+            borderRadius: 25,
+            borderWidth: 2,
+            borderColor: 'black',
+          }}>
+          <Text
+            style={{
+              fontSize: 20,
+              paddingBottom: '5%',
+              paddingTop: '3%',
+              fontWeight: 'bold',
+              textAlign: 'center',
+            }}>
+            Филтриране по:
+          </Text>
+          <Text
+            style={{
+              fontSize: 15,
+              paddingBottom: '2%',
+              paddingLeft: '6%',
+              fontWeight: 'bold',
+              textAlign: 'left',
+            }}>
+            Град:
+          </Text>
+          <DropDownPicker
+            zIndex={3000}
+            zIndexInverse={1000}
+            items={uniqueCities}
+            open={isCityFilterPickerVisible}
+            style={filterStyles}
+            containerStyle={filterContainerStyles}
+            dropDownContainerStyle={filterStyles}
+            setOpen={setCityFilterPickerVisible}
+            placeholder={'Избери град'}
+            setValue={setFilterCity}
+            onClose={() => {
+              setCityFilterPickerVisible(false);
+              setFilterModalVisible(false);
+            }}
+            value={filterCity}
+          />
+          <Text
+            style={{
+              fontSize: 15,
+              paddingBottom: '2%',
+              paddingTop: '2%',
+              paddingLeft: '6%',
+              fontWeight: 'bold',
+              textAlign: 'left',
+            }}>
+            Ниво на опасност:
+          </Text>
+          <DropDownPicker
+            zIndex={2000}
+            zIndexInverse={2000}
+            items={uniqueLevels}
+            mode={'BADGE'}
+            open={isLevelFilterPickerVisible}
+            style={filterStyles}
+            containerStyle={filterContainerStyles}
+            dropDownContainerStyle={filterStyles}
+            setOpen={setLevelFilterPickerVisible}
+            placeholder={'Избери ниво'}
+            setValue={setFilterLevel}
+            onClose={() => {
+              setLevelFilterPickerVisible(false);
+              setFilterModalVisible(false);
+            }}
+            value={filterLevel}
+          />
+          <Button
+            title="Изчисти"
+            color="Black"
+            onPress={() => {
+              setFilterCity('');
+              setFilterLevel('');
+              setFilterModalVisible(false);
             }}
           />
         </View>
@@ -264,11 +371,8 @@ const HomeScreen = ({navigation}) => {
 };
 
 const styles = StyleSheet.create({
-  mainView: {
-    flex: 1,
-    // width: '95%',
-    contentContainerStyle: 'center',
-    backgroundColor: '#9dddee',
+  dropDownContainerStyle: {
+    backgroundColor: '#dfdfdf',
   },
 });
 
@@ -283,6 +387,15 @@ const headerStyles = StyleSheet.create({
     fontWeight: 'bold',
     // textDecorationLine: 'underline',
   },
+});
+
+const filterStyles = StyleSheet.create({
+  width: '90%',
+});
+
+const filterContainerStyles = StyleSheet.create({
+  justifyContent: 'center',
+  alignItems: 'center',
 });
 
 export default HomeScreen;
