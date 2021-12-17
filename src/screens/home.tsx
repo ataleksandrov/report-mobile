@@ -1,14 +1,22 @@
 import React, {useState} from 'react';
-import {ScrollView, Text, StyleSheet, View, Button} from 'react-native';
+import {
+  ScrollView,
+  Text,
+  StyleSheet,
+  View,
+  Button,
+  TouchableOpacity,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import ReportList from '../components/reportList';
 import Modal from 'react-native-modal';
 import DropDownPicker from 'react-native-dropdown-picker';
+import {Report} from '../models/report';
 
 const HomeScreen = ({navigation}) => {
   // const { data: events } = useAsync(() => client.getEvents(), []);
   // todo add visible: true, after fetching from server
-  const reports = [
+  const reports: Report[] = [
     {
       reportId: 'id asd',
       title: 'title asd',
@@ -19,7 +27,6 @@ const HomeScreen = ({navigation}) => {
         'https://media.nationalgeographic.org/assets/photos/000/272/27281.jpg',
       ],
       userId: 'userId string',
-      visible: true,
       city: 'Бургас',
       level: 'low',
     },
@@ -33,7 +40,6 @@ const HomeScreen = ({navigation}) => {
         'https://www.genevaenvironmentnetwork.org/wp-content/uploads/2020/11/2019_0520-plastic-pollution-aspect-ratio-2000-1200-1024x614.jpg',
       ],
       userId: 'userId string',
-      visible: true,
       city: 'Пловдив',
       level: 'low',
     },
@@ -47,7 +53,6 @@ const HomeScreen = ({navigation}) => {
         'https://www.genevaenvironmentnetwork.org/wp-content/uploads/2020/11/2019_0520-plastic-pollution-aspect-ratio-2000-1200-1024x614.jpg',
       ],
       userId: 'userId string',
-      visible: true,
       city: 'Варна',
       level: 'high',
     },
@@ -61,7 +66,6 @@ const HomeScreen = ({navigation}) => {
         'https://www.genevaenvironmentnetwork.org/wp-content/uploads/2020/11/2019_0520-plastic-pollution-aspect-ratio-2000-1200-1024x614.jpg',
       ],
       userId: 'userId string',
-      visible: true,
       city: 'София',
       level: 'high',
     },
@@ -75,7 +79,6 @@ const HomeScreen = ({navigation}) => {
         'https://www.genevaenvironmentnetwork.org/wp-content/uploads/2020/11/2019_0520-plastic-pollution-aspect-ratio-2000-1200-1024x614.jpg',
       ],
       userId: 'userId string',
-      visible: true,
       city: 'Бургас',
       level: 'high',
     },
@@ -89,7 +92,6 @@ const HomeScreen = ({navigation}) => {
         'https://www.genevaenvironmentnetwork.org/wp-content/uploads/2020/11/2019_0520-plastic-pollution-aspect-ratio-2000-1200-1024x614.jpg',
       ],
       userId: 'userId string',
-      visible: true,
       city: 'Пловдив',
       level: 'medium',
     },
@@ -103,7 +105,6 @@ const HomeScreen = ({navigation}) => {
         'https://www.genevaenvironmentnetwork.org/wp-content/uploads/2020/11/2019_0520-plastic-pollution-aspect-ratio-2000-1200-1024x614.jpg',
       ],
       userId: 'userId string',
-      visible: true,
       city: 'Варна',
       level: 'medium',
     },
@@ -117,7 +118,6 @@ const HomeScreen = ({navigation}) => {
         'https://www.genevaenvironmentnetwork.org/wp-content/uploads/2020/11/2019_0520-plastic-pollution-aspect-ratio-2000-1200-1024x614.jpg',
       ],
       userId: 'userId string',
-      visible: true,
       city: 'София',
       level: 'medium',
     },
@@ -131,7 +131,6 @@ const HomeScreen = ({navigation}) => {
         'https://www.genevaenvironmentnetwork.org/wp-content/uploads/2020/11/2019_0520-plastic-pollution-aspect-ratio-2000-1200-1024x614.jpg',
       ],
       userId: 'userId string',
-      visible: true,
       city: 'Бургас',
       level: 'low',
     },
@@ -145,7 +144,6 @@ const HomeScreen = ({navigation}) => {
         'https://www.genevaenvironmentnetwork.org/wp-content/uploads/2020/11/2019_0520-plastic-pollution-aspect-ratio-2000-1200-1024x614.jpg',
       ],
       userId: 'userId string',
-      visible: true,
       city: 'Бургас',
       level: 'low',
     },
@@ -159,12 +157,15 @@ const HomeScreen = ({navigation}) => {
         'https://www.genevaenvironmentnetwork.org/wp-content/uploads/2020/11/2019_0520-plastic-pollution-aspect-ratio-2000-1200-1024x614.jpg',
       ],
       userId: 'userId string',
-      visible: true,
       city: 'Бургас',
       level: 'high',
     },
   ];
+  // sort
   const [isSortModalVisible, setSortModalVisible] = useState(false);
+  const [sortingProp, setSortingProp] = useState('');
+
+  // filter
   const [isFilterModalVisible, setFilterModalVisible] = useState(false);
   const [isCityFilterPickerVisible, setCityFilterPickerVisible] =
     useState(false);
@@ -185,7 +186,7 @@ const HomeScreen = ({navigation}) => {
   }));
 
   return (
-    <View style={{flex: 1}}>
+    <View style={{flex: 1, backgroundColor: '#0a798d'}}>
       <Text style={headerStyles.title}>Получени сигнали</Text>
       <View
         style={{
@@ -200,7 +201,6 @@ const HomeScreen = ({navigation}) => {
           backgroundColor="#9dddee"
           onPress={() => {
             setFilterModalVisible(true);
-            // setFilterPickerVisible(true);
           }}
           iconStyle={{marginLeft: '50%', color: 'black'}}
           style={{
@@ -229,45 +229,85 @@ const HomeScreen = ({navigation}) => {
           }}
         />
       </View>
-      <ScrollView style={styles.mainView}>
+      <ScrollView>
         {data && (
           <ReportList
             reports={data
               .filter(x => filterCity === '' || x.city === filterCity)
-              .filter(x => filterLevel === '' || x.level === filterLevel)}
+              .filter(x => filterLevel === '' || x.level === filterLevel)
+              .sort((obj1, obj2) => {
+                if (sortingProp === '') {
+                  return 0;
+                }
+                if (obj1[sortingProp] > obj2[sortingProp]) {
+                  return 1;
+                }
+                if (obj1[sortingProp] < obj2[sortingProp]) {
+                  return -1;
+                }
+                return 0;
+              })}
           />
         )}
-        {console.log('LOGGING ' + data.map(x => x.visible))}
       </ScrollView>
 
       {/* sorting modal */}
       <Modal
         isVisible={isSortModalVisible}
-        onBackdropPress={() => setSortModalVisible(false)}>
-        <View
-          style={{
-            justifyContent: 'center',
-            alignItems: 'center',
-            backgroundColor: '#0a798d',
-          }}>
-          <Button
-            title="по дата"
-            style={{color: 'black'}}
-            onPress={() => {
-              setSortModalVisible(false);
+        onBackdropPress={() => setSortModalVisible(false)}
+        style={sortModalStyles.modalStyle}>
+        <View style={sortModalStyles.mainView}>
+          <Text style={sortModalStyles.title}>Сортирай по:</Text>
+          <TouchableOpacity
+            style={{
+              ...sortModalStyles.sortButtons,
+              backgroundColor: sortingProp === 'date' ? 'grey' : '#DDDDDD',
             }}
-          />
-          <Button
-            title="по локация"
+            disabled={sortingProp === 'date'}
             onPress={() => {
-              // setVisibleByCity('Бургас');
+              setSortingProp('date');
               setSortModalVisible(false);
+            }}>
+            <Text
+              style={{textAlign: 'center', fontSize: 15, fontWeight: 'bold', paddingTop: 4}}>
+              Дата
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{
+              ...sortModalStyles.sortButtons,
+              backgroundColor: sortingProp === 'city' ? 'grey' : '#DDDDDD',
             }}
-          />
-          <Button
-            title="изчисти"
+            disabled={sortingProp === 'city'}
             onPress={() => {
-              setFilterCity('');
+              setSortingProp('city');
+              setSortModalVisible(false);
+            }}>
+            <Text
+              style={{textAlign: 'center', fontSize: 15, fontWeight: 'bold', paddingTop: 4}}>
+              Град
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{
+              ...sortModalStyles.sortButtons,
+              backgroundColor: sortingProp === 'level' ? 'grey' : '#DDDDDD',
+            }}
+            disabled={sortingProp === 'level'}
+            onPress={() => {
+              setSortingProp('level');
+              setSortModalVisible(false);
+            }}>
+            <Text
+              style={{textAlign: 'center', fontSize: 15, fontWeight: 'bold', paddingTop: 4}}>
+              Ниво
+            </Text>
+          </TouchableOpacity>
+          <Button
+            title="Изчисти"
+            color="#000000"
+            onPress={() => {
+              setSortingProp('');
               setSortModalVisible(false);
             }}
           />
@@ -279,44 +319,17 @@ const HomeScreen = ({navigation}) => {
         isVisible={isFilterModalVisible}
         onBackdropPress={() => setFilterModalVisible(false)}
         style={{flex: 1}}>
-        <View
-          style={{
-            height: 250,
-            // justifyContent: 'center',
-            // alignItems: 'center',
-            backgroundColor: '#0a798d',
-            borderRadius: 25,
-            borderWidth: 2,
-            borderColor: 'black',
-          }}>
-          <Text
-            style={{
-              fontSize: 20,
-              paddingBottom: '5%',
-              paddingTop: '3%',
-              fontWeight: 'bold',
-              textAlign: 'center',
-            }}>
-            Филтриране по:
-          </Text>
-          <Text
-            style={{
-              fontSize: 15,
-              paddingBottom: '2%',
-              paddingLeft: '6%',
-              fontWeight: 'bold',
-              textAlign: 'left',
-            }}>
-            Град:
-          </Text>
+        <View style={filterModalStyles.mainView}>
+          <Text style={filterModalStyles.title}>Филтриране по:</Text>
+          <Text style={filterModalStyles.text}>Град:</Text>
           <DropDownPicker
             zIndex={3000}
             zIndexInverse={1000}
             items={uniqueCities}
             open={isCityFilterPickerVisible}
-            style={filterStyles}
-            containerStyle={filterContainerStyles}
-            dropDownContainerStyle={filterStyles}
+            style={filterModalStyles.filterStyles}
+            containerStyle={filterModalStyles.filterContainerStyles}
+            dropDownContainerStyle={filterModalStyles.filterStyles}
             setOpen={setCityFilterPickerVisible}
             placeholder={'Избери град'}
             setValue={setFilterCity}
@@ -326,26 +339,16 @@ const HomeScreen = ({navigation}) => {
             }}
             value={filterCity}
           />
-          <Text
-            style={{
-              fontSize: 15,
-              paddingBottom: '2%',
-              paddingTop: '2%',
-              paddingLeft: '6%',
-              fontWeight: 'bold',
-              textAlign: 'left',
-            }}>
-            Ниво на опасност:
-          </Text>
+          <Text style={filterModalStyles.text}>Ниво на опасност:</Text>
           <DropDownPicker
             zIndex={2000}
             zIndexInverse={2000}
             items={uniqueLevels}
             mode={'BADGE'}
             open={isLevelFilterPickerVisible}
-            style={filterStyles}
-            containerStyle={filterContainerStyles}
-            dropDownContainerStyle={filterStyles}
+            style={filterModalStyles.filterStyles}
+            containerStyle={filterModalStyles.filterContainerStyles}
+            dropDownContainerStyle={filterModalStyles.filterStyles}
             setOpen={setLevelFilterPickerVisible}
             placeholder={'Избери ниво'}
             setValue={setFilterLevel}
@@ -357,7 +360,7 @@ const HomeScreen = ({navigation}) => {
           />
           <Button
             title="Изчисти"
-            color="Black"
+            color="#000000"
             onPress={() => {
               setFilterCity('');
               setFilterLevel('');
@@ -389,13 +392,63 @@ const headerStyles = StyleSheet.create({
   },
 });
 
-const filterStyles = StyleSheet.create({
-  width: '90%',
+const filterModalStyles = StyleSheet.create({
+  mainView: {
+    height: 250,
+    backgroundColor: '#0a798d',
+    borderRadius: 25,
+    borderWidth: 2,
+    borderColor: 'black',
+  },
+  title: {
+    fontSize: 20,
+    paddingBottom: '2%',
+    paddingTop: '3%',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  text: {
+    fontSize: 15,
+    paddingBottom: '2%',
+    paddingTop: '2%',
+    paddingLeft: '6%',
+    fontWeight: 'bold',
+    textAlign: 'left',
+  },
+  filterStyles: {width: '90%'},
+  filterContainerStyles: {justifyContent: 'center', alignItems: 'center'},
 });
 
-const filterContainerStyles = StyleSheet.create({
-  justifyContent: 'center',
-  alignItems: 'center',
+const sortModalStyles = StyleSheet.create({
+  sortButtons: {
+    borderRadius: 40,
+    width: '55%',
+    height: 35,
+    paddingBottom: 3,
+    paddingTop: 3,
+    marginTop: 10,
+    marginBottom: 10,
+  },
+  modalStyle: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  mainView: {
+    width: '70%',
+    backgroundColor: '#0a798d',
+    borderRadius: 20,
+    borderWidth: 2,
+    borderColor: 'black',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  title: {
+    fontSize: 20,
+    paddingBottom: '3%',
+    paddingTop: '3%',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
 });
 
 export default HomeScreen;
