@@ -6169,6 +6169,11 @@
   dependencies:
     "glob" "^7.1.3"
 
+"rn-slider-switch@^0.0.3":
+  "integrity" "sha1-/HGsd4cpQ8tL9yqs/sRtxk9Xyfc="
+  "resolved" "https://registry.npmjs.org/rn-slider-switch/-/rn-slider-switch-0.0.3.tgz"
+  "version" "0.0.3"
+
 "rsvp@^4.8.4":
   "integrity" "sha512-nfMOlASu9OnRJo1mbEk2cz0D56a1MBNrJ7orjRZQG10XDyuvwksKbuXNp6qa+kbn839HwjwhBzhFmdsaEAfauA=="
   "resolved" "https://registry.npmjs.org/rsvp/-/rsvp-4.8.5.tgz"
