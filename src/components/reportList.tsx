@@ -15,7 +15,6 @@ const styles = StyleSheet.create({
 });
 
 export default function ReportList({reports}: ReportListProps) {
-  console.log('rerendering:');
   return (
     <View style={{marginTop: 4}}>
       {reports.map(report => (
