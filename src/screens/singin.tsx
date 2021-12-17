@@ -38,12 +38,13 @@ const LoginScreen = ({navigation}) => {
   return (
     <View style={styles.mainBody}>
       <Loader loading={loading} />
-      <ScrollView
-        keyboardShouldPersistTaps="handled"
+      <Text style={headerStyles.title}>Вход</Text>
+      <View
+        // keyboardShouldPersistTaps="handled"
         contentContainerStyle={{
           flex: 1,
-          justifyContent: 'center',
-          alignContent: 'center',
+          // justifyContent: 'center',
+          // alignContent: 'center',
         }}>
         <View>
           <KeyboardAvoidingView enabled>
@@ -52,7 +53,7 @@ const LoginScreen = ({navigation}) => {
               <TextInput
                 style={styles.inputStyle}
                 onChangeText={UserEmail => setUserEmail(UserEmail)}
-                placeholder="Enter Email" //dummy@abc.com
+                placeholder="Въведи имейл" //dummy@abc.com
                 placeholderTextColor="#8b9cb5"
                 autoCapitalize="none"
                 keyboardType="email-address"
@@ -65,7 +66,7 @@ const LoginScreen = ({navigation}) => {
               <TextInput
                 style={styles.inputStyle}
                 onChangeText={UserPassword => setUserPassword(UserPassword)}
-                placeholder="Enter Password" //12345
+                placeholder="Въведи парола" //12345
                 placeholderTextColor="#8b9cb5"
                 keyboardType="default"
                 onSubmitEditing={Keyboard.dismiss}
@@ -82,16 +83,16 @@ const LoginScreen = ({navigation}) => {
               style={styles.buttonStyle}
               activeOpacity={0.5}
               onPress={handleSubmitPress}>
-              <Text style={styles.buttonTextStyle}>LOGIN</Text>
+              <Text style={styles.buttonTextStyle}>Вход</Text>
             </TouchableOpacity>
             <Text
               style={styles.registerTextStyle}
-              onPress={() => navigation.navigate('RegisterScreen')}>
-              New Here ? Register
+              onPress={() => navigation.navigate('Регистрация')}>
+              Нямате профил? Регистрирайте се!
             </Text>
           </KeyboardAvoidingView>
         </View>
-      </ScrollView>
+      </View>
     </View>
   );
 };
@@ -100,9 +101,7 @@ export default LoginScreen;
 const styles = StyleSheet.create({
   mainBody: {
     flex: 1,
-    justifyContent: 'center',
     backgroundColor: '#0a798d',
-    alignContent: 'center',
   },
   SectionStyle: {
     flexDirection: 'row',
@@ -117,7 +116,7 @@ const styles = StyleSheet.create({
     borderWidth: 0,
     color: '#FFFFFF',
     borderColor: '#7DE24E',
-    height: 40,
+    height: 50,
     alignItems: 'center',
     borderRadius: 30,
     marginLeft: 35,
@@ -127,7 +126,7 @@ const styles = StyleSheet.create({
   },
   buttonTextStyle: {
     color: '#FFFFFF',
-    paddingVertical: 10,
+    paddingVertical: 13,
     fontSize: 16,
   },
   inputStyle: {
@@ -137,13 +136,14 @@ const styles = StyleSheet.create({
     paddingRight: 15,
     borderWidth: 1,
     borderRadius: 30,
+    height: 50,
     borderColor: '#dadae8',
   },
   registerTextStyle: {
     color: '#FFFFFF',
     textAlign: 'center',
     fontWeight: 'bold',
-    fontSize: 14,
+    fontSize: 15,
     alignSelf: 'center',
     padding: 10,
   },
@@ -151,5 +151,18 @@ const styles = StyleSheet.create({
     color: 'red',
     textAlign: 'center',
     fontSize: 14,
+  },
+});
+
+const headerStyles = StyleSheet.create({
+  title: {
+    paddingTop: 60,
+    paddingBottom: 20,
+    fontSize: 30,
+    textAlign: 'center',
+    color: 'black',
+    backgroundColor: '#0a798d',
+    fontWeight: 'bold',
+    // textDecorationLine: 'underline',
   },
 });

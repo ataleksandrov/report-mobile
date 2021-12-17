@@ -15,13 +15,13 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName="Singup"
+        initialRouteName="Вход"
         screenOptions={{
           headerTintColor: 'white',
           headerStyle: {backgroundColor: '#0a798d'},
         }}>
-        <Stack.Screen name="Singup" component={Signup} />
-        <Stack.Screen name="Signin" component={Signin} />
+        <Stack.Screen name="Регистрация" component={Signup} options={{headerShown: false}}/>
+        <Stack.Screen name="Вход" component={Signin} options={{headerShown: false}}/>
         <Stack.Screen
           name="Navigation"
           component={Navigation}
