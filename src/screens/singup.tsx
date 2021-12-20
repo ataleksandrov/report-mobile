@@ -69,8 +69,8 @@ const Signup = (props: {navigation: {navigate: (arg0: string) => void}}) => {
         <TouchableOpacity
           style={styles.buttonStyle}
           activeOpacity={0.5}
-          onPress={() => props.navigation.navigate('Signin')}>
-          <Text style={styles.buttonTextStyle}>Login Now</Text>
+          onPress={() => props.navigation.navigate('Вход')}>
+          <Text style={styles.buttonTextStyle}>Вход</Text>
         </TouchableOpacity>
       </View>
     );
@@ -78,8 +78,9 @@ const Signup = (props: {navigation: {navigate: (arg0: string) => void}}) => {
   return (
     <View style={{flex: 1, backgroundColor: '#0a798d'}}>
       <Loader loading={loading} />
-      <ScrollView
-        keyboardShouldPersistTaps="handled"
+      <Text style={headerStyles.title}>Регистрация</Text>
+      <View
+        // keyboardShouldPersistTaps="handled"
         contentContainerStyle={{
           justifyContent: 'center',
           alignContent: 'center',
@@ -90,7 +91,7 @@ const Signup = (props: {navigation: {navigate: (arg0: string) => void}}) => {
               style={styles.inputStyle}
               onChangeText={UserName => setUserName(UserName)}
               underlineColorAndroid="#f000"
-              placeholder="Enter Name"
+              placeholder="Въведи име"
               placeholderTextColor="#8b9cb5"
               autoCapitalize="sentences"
               returnKeyType="next"
@@ -102,7 +103,7 @@ const Signup = (props: {navigation: {navigate: (arg0: string) => void}}) => {
               style={styles.inputStyle}
               onChangeText={UserEmail => setUserEmail(UserEmail)}
               underlineColorAndroid="#f000"
-              placeholder="Enter Email"
+              placeholder="Въведи имейл"
               placeholderTextColor="#8b9cb5"
               keyboardType="email-address"
               returnKeyType="next"
@@ -114,7 +115,7 @@ const Signup = (props: {navigation: {navigate: (arg0: string) => void}}) => {
               style={styles.inputStyle}
               onChangeText={UserPassword => setUserPassword(UserPassword)}
               underlineColorAndroid="#f000"
-              placeholder="Enter Password"
+              placeholder="Въведи парола"
               placeholderTextColor="#8b9cb5"
               returnKeyType="next"
               secureTextEntry={true}
@@ -128,10 +129,10 @@ const Signup = (props: {navigation: {navigate: (arg0: string) => void}}) => {
             style={styles.buttonStyle}
             activeOpacity={0.5}
             onPress={handleSubmitButton}>
-            <Text style={styles.buttonTextStyle}>REGISTER</Text>
+            <Text style={styles.buttonTextStyle}>Регистрация</Text>
           </TouchableOpacity>
         </KeyboardAvoidingView>
-      </ScrollView>
+      </View>
     </View>
   );
 };
@@ -151,7 +152,7 @@ const styles = StyleSheet.create({
     borderWidth: 0,
     color: '#FFFFFF',
     borderColor: '#7DE24E',
-    height: 40,
+    height: 50,
     alignItems: 'center',
     borderRadius: 30,
     marginLeft: 35,
@@ -161,7 +162,7 @@ const styles = StyleSheet.create({
   },
   buttonTextStyle: {
     color: '#FFFFFF',
-    paddingVertical: 10,
+    paddingVertical: 13,
     fontSize: 16,
   },
   inputStyle: {
@@ -172,6 +173,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 30,
     borderColor: '#dadae8',
+    height: 50,
   },
   errorTextStyle: {
     color: 'red',
@@ -183,5 +185,18 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 18,
     padding: 30,
+  },
+});
+
+const headerStyles = StyleSheet.create({
+  title: {
+    paddingTop: 60,
+    paddingBottom: 20,
+    fontSize: 30,
+    textAlign: 'center',
+    color: 'black',
+    backgroundColor: '#0a798d',
+    fontWeight: 'bold',
+    // textDecorationLine: 'underline',
   },
 });
