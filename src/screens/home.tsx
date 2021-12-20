@@ -230,25 +230,41 @@ const HomeScreen = ({navigation}) => {
         />
       </View>
       <ScrollView>
-        {data && (
-          <ReportList
-            reports={data
-              .filter(x => filterCity === '' || x.city === filterCity)
-              .filter(x => filterLevel === '' || x.level === filterLevel)
-              .sort((obj1, obj2) => {
-                if (sortingProp === '') {
+        {
+          // durty workaround, as child is not reloaded after parent state change
+          data
+            .filter(x => filterCity === '' || x.city === filterCity)
+            .filter(x => filterLevel === '' || x.level === filterLevel)
+            .length !== 0 ? (
+            <ReportList
+              reports={data
+                .filter(x => filterCity === '' || x.city === filterCity)
+                .filter(x => filterLevel === '' || x.level === filterLevel)
+                .sort((obj1, obj2) => {
+                  if (sortingProp === '') {
+                    return 0;
+                  }
+                  if (obj1[sortingProp] > obj2[sortingProp]) {
+                    return 1;
+                  }
+                  if (obj1[sortingProp] < obj2[sortingProp]) {
+                    return -1;
+                  }
                   return 0;
-                }
-                if (obj1[sortingProp] > obj2[sortingProp]) {
-                  return 1;
-                }
-                if (obj1[sortingProp] < obj2[sortingProp]) {
-                  return -1;
-                }
-                return 0;
-              })}
-          />
-        )}
+                })}
+            />
+          ) : (
+            <Text
+              style={{
+                color: 'black',
+                fontSize: 20,
+                textAlign: 'center',
+                paddingTop: 30,
+              }}>
+              Няма намерени резултати
+            </Text>
+          )
+        }
       </ScrollView>
 
       {/* sorting modal */}
@@ -269,7 +285,12 @@ const HomeScreen = ({navigation}) => {
               setSortModalVisible(false);
             }}>
             <Text
-              style={{textAlign: 'center', fontSize: 15, fontWeight: 'bold', paddingTop: 4}}>
+              style={{
+                textAlign: 'center',
+                fontSize: 15,
+                fontWeight: 'bold',
+                paddingTop: 4,
+              }}>
               Дата
             </Text>
           </TouchableOpacity>
@@ -284,7 +305,12 @@ const HomeScreen = ({navigation}) => {
               setSortModalVisible(false);
             }}>
             <Text
-              style={{textAlign: 'center', fontSize: 15, fontWeight: 'bold', paddingTop: 4}}>
+              style={{
+                textAlign: 'center',
+                fontSize: 15,
+                fontWeight: 'bold',
+                paddingTop: 4,
+              }}>
               Град
             </Text>
           </TouchableOpacity>
@@ -299,7 +325,12 @@ const HomeScreen = ({navigation}) => {
               setSortModalVisible(false);
             }}>
             <Text
-              style={{textAlign: 'center', fontSize: 15, fontWeight: 'bold', paddingTop: 4}}>
+              style={{
+                textAlign: 'center',
+                fontSize: 15,
+                fontWeight: 'bold',
+                paddingTop: 4,
+              }}>
               Ниво
             </Text>
           </TouchableOpacity>

@@ -5,27 +5,33 @@ import {
   View,
   Text,
   ScrollView,
-  Keyboard,
   TouchableOpacity,
   KeyboardAvoidingView,
-  SafeAreaView,
+  Image,
+  Button,
+  Modal,
 } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
+import * as ImagePicker from 'react-native-image-picker';
+import MapView, {MapEvent, Marker} from 'react-native-maps';
 
 import Loader from '../components/loader';
 
 const ReportScreen = ({navigation}) => {
-  const [userEmail, setUserEmail] = useState('');
-  const [userPassword, setUserPassword] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [errortext, setErrortext] = useState('');
+  const emptyPhoto = {
+    fileUri: '',
+  };
+  const [photo, setPhoto] = useState(emptyPhoto);
+
+  const [isMapModalVisible, setMapModalVisible] = useState(false);
+  const [marker, setMarker] = useState({latitude: 1, longitude: 1});
 
   const [polutionType, setPolutionType] = useState('');
   const [polutionLevel, setPolutionLevel] = useState('');
 
   const [typePickerVisible, setTypePickerVisible] = useState(false);
   const [levelPickerVisible, setLevelPickerVisible] = useState(false);
- 
+
   var polutionTypes = [
     {value: 'Битови', label: 'Битови'},
     {value: 'Опасни', label: 'Опасни'},
@@ -37,34 +43,57 @@ const ReportScreen = ({navigation}) => {
     {value: 'Високо', label: 'Високо'},
   ];
 
-  const handleSubmitPress = () => {
-    setErrortext('');
-    if (!userEmail) {
-      alert('Please fill Email');
-      return;
-    }
-    if (!userPassword) {
-      alert('Please fill Password');
-      return;
-    }
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      navigation.navigate('Navigation');
-    }, 2000);
+  const launchImageLibrary = () => {
+    let options = {
+      mediaType: 'photo',
+      selectionLimit: 1,
+    };
+    ImagePicker.launchImageLibrary(options, response => {
+      console.log('Response = ', response);
+
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.errorCode) {
+        console.log('ImagePicker Error: ', response.errorMessage);
+      } else {
+        console.log('response', JSON.stringify(response));
+        setPhoto({
+          fileUri: response.assets[0].uri,
+        });
+        console.log(photo);
+      }
+    });
+  };
+
+  const launchCamera = () => {
+    let options = {
+      mediaType: 'photo',
+    };
+    ImagePicker.launchCamera(options, response => {
+      console.log('Response = ', response);
+
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.errorCode) {
+        console.log('ImagePicker Error: ', response.errorMessage);
+      } else {
+        console.log('response', JSON.stringify(response));
+        setPhoto({
+          fileUri: response.assets[0].uri,
+        });
+        console.log(photo);
+      }
+    });
   };
 
   return (
     <View style={styles.mainView}>
       <Text style={headerStyles.title}>Подай сигнал</Text>
-      <View style={styles.mainBody}>
-        <Loader loading={loading} />
+      <ScrollView>
         <ScrollView
           keyboardShouldPersistTaps="handled"
           contentContainerStyle={{
             flex: 1,
-            // justifyContent: 'center',
-            // alignContent: 'center',
           }}>
           <View>
             <KeyboardAvoidingView enabled>
@@ -75,7 +104,7 @@ const ReportScreen = ({navigation}) => {
                   fontWeight: 'bold',
                   paddingTop: 30,
                 }}>
-                Описание:
+                Описание
               </Text>
               <View style={{alignItems: 'center'}} />
               <View style={styles.SectionStyle}>
@@ -83,7 +112,7 @@ const ReportScreen = ({navigation}) => {
                   style={styles.inputStyle}
                   multiline
                   numberOfLines={4}
-                  onChangeText={UserEmail => setUserEmail(UserEmail)} // todo change
+                  onChangeText={() => {}} // todo change
                   placeholder="Въведи описание"
                   placeholderTextColor="#8b9cb5"
                   autoCapitalize="none"
@@ -93,9 +122,146 @@ const ReportScreen = ({navigation}) => {
                   blurOnSubmit={false}
                 />
               </View>
-              {errortext !== '' ? (
-                <Text style={styles.errorTextStyle}>{errortext}</Text>
-              ) : null}
+              {/*  */}
+              {/*  */}
+              {/* Photo */}
+              {/*  */}
+              {/*  */}
+              <Text
+                style={{
+                  paddingLeft: 40,
+                  fontSize: 20,
+                  fontWeight: 'bold',
+                  paddingTop: 30,
+                  paddingBottom: 10,
+                }}>
+                Снимка
+              </Text>
+              {photo.fileUri !== '' && (
+                <View>
+                  <Image source={{uri: photo.fileUri}} style={styles.images} />
+                  <TouchableOpacity
+                    activeOpacity={0.5}
+                    onPress={() => {
+                      setPhoto(emptyPhoto);
+                    }}>
+                    <Text style={styles.imagesDeleteButton}>Изчисти</Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+              <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
+                <TouchableOpacity
+                  style={styles.imagesUploadButtons}
+                  activeOpacity={0.5}
+                  onPress={launchImageLibrary}>
+                  <Text style={styles.ImageButtonTextStyle}>
+                    Прикачи снимка
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.imagesUploadButtons}
+                  activeOpacity={0.5}
+                  onPress={launchCamera}>
+                  <Text style={styles.ImageButtonTextStyle}>Отвори камера</Text>
+                </TouchableOpacity>
+              </View>
+              {/*  */}
+              {/*  */}
+              {/* Map */}
+              {/*  */}
+              {/*  */}
+              <Text
+                style={{
+                  paddingLeft: 40,
+                  fontSize: 20,
+                  fontWeight: 'bold',
+                  paddingTop: 20,
+                }}>
+                Местоположение
+              </Text>
+              {marker.latitude !== 1 && (
+                <View>
+                  <Text
+                    style={{
+                      paddingLeft: 40,
+                      paddingTop: 10,
+                      paddingBottom: 10,
+                      color: 'green',
+                    }}>
+                    Избраните кординати са:
+                  </Text>
+                  <Text
+                    style={{
+                      paddingLeft: 45,
+                      fontWeight: 'bold',
+                      paddingTop: 5,
+                      paddingBottom: 10,
+                      // color: 'green',
+                    }}>
+                    ({marker.longitude},{' '}{marker.latitude})
+                  </Text>
+                </View>
+              )}
+              <View style={{flexDirection: 'row', flexWrap: 'wrap', paddingLeft: '20%'}}>
+                <TouchableOpacity
+                  activeOpacity={0.5}
+                  style={styles.imagesUploadButtons}
+                  onPress={() => {
+                    setMapModalVisible(true);
+                  }}>
+                  <Text style={styles.ImageButtonTextStyle}>
+                    Отбележи на картата
+                  </Text>
+                </TouchableOpacity>
+              </View>
+              <Modal
+                style={styles.mapViewStyle}
+                visible={isMapModalVisible}
+                onBackdropPress={() => setMapModalVisible(false)}>
+                <MapView
+                  style={{flex: 1}}
+                  showsUserLocation={true}
+                  minZoomLevel={5}
+                  onLongPress={(event: MapEvent) => {
+                    setMarker(event.nativeEvent.coordinate);
+                    console.log('Coordinates are:', marker);
+                  }}>
+                  <Marker
+                    coordinate={{
+                      latitude: marker.latitude,
+                      longitude: marker.longitude,
+                    }}
+                    title={'My maker'}
+                    description={'My maker description'}>
+                    <MapView.Callout>
+                      <View style={styles.mapViewStyle}>
+                        <Text style={{textAlign: 'justify', paddingBottom: 20}}>
+                          Искате ли да използвате тази локация?
+                        </Text>
+                        <TouchableOpacity
+                          activeOpacity={0.5}
+                          // style={styles.mapViewStyle}
+                          onPress={() => {
+                            setMapModalVisible(false);
+                          }}>
+                          <Text
+                            style={{
+                              borderColor: 'black',
+                              borderWidth: 1,
+                            }}>
+                            да
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
+                    </MapView.Callout>
+                  </Marker>
+                </MapView>
+              </Modal>
+              {/*  */}
+              {/*  */}
+              {/* Polution */}
+              {/*  */}
+              {/*  */}
               <Text
                 style={{
                   paddingLeft: 40,
@@ -103,7 +269,7 @@ const ReportScreen = ({navigation}) => {
                   fontWeight: 'bold',
                   paddingTop: 15,
                 }}>
-                Вид замърсяване:
+                Вид замърсяване
               </Text>
               <DropDownPicker
                 zIndex={3000}
@@ -122,6 +288,11 @@ const ReportScreen = ({navigation}) => {
                 }}
                 value={polutionType}
               />
+              {/*  */}
+              {/*  */}
+              {/* Level */}
+              {/*  */}
+              {/*  */}
               <Text
                 style={{
                   paddingLeft: 40,
@@ -129,18 +300,18 @@ const ReportScreen = ({navigation}) => {
                   fontWeight: 'bold',
                   paddingTop: 15,
                 }}>
-                Ниво на заплаха:
+                Ниво на заплаха
               </Text>
               <DropDownPicker
                 zIndex={2000}
-                zIndexInverse={2000}
+                zIndexInverse={4000}
                 items={polutionLevels}
                 open={levelPickerVisible}
                 style={filterModalStyles.filterStyles}
                 containerStyle={filterModalStyles.filterContainerStyles}
                 dropDownContainerStyle={filterModalStyles.filterStyles}
                 setOpen={setLevelPickerVisible}
-                placeholder={'Избери вид'}
+                placeholder={'Избери ниво'}
                 setValue={setPolutionLevel}
                 listMode="SCROLLVIEW"
                 onClose={() => {
@@ -151,13 +322,13 @@ const ReportScreen = ({navigation}) => {
               <TouchableOpacity
                 style={styles.buttonStyle}
                 activeOpacity={0.5}
-                onPress={handleSubmitPress}>
+                onPress={() => {}}>
                 <Text style={styles.buttonTextStyle}>Сигнализирай</Text>
               </TouchableOpacity>
             </KeyboardAvoidingView>
           </View>
         </ScrollView>
-      </View>
+      </ScrollView>
     </View>
   );
 };
@@ -171,6 +342,7 @@ const headerStyles = StyleSheet.create({
     color: 'black',
     backgroundColor: '#0a798d',
     fontWeight: 'bold',
+    // paddingBottom: 10,
     // textDecorationLine: 'underline',
   },
 });
@@ -180,12 +352,11 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#9dddee',
   },
-  mainBody: {
-    flex: 1,
-    // justifyContent: 'center',
-    backgroundColor: '#9dddee',
-    // alignContent: 'center',
-  },
+  // mainBody: {
+  //   // flex: 1,
+  //   // backgroundColor: '#9dddee',
+  //   // paddingTop: 30,
+  // },
   SectionStyle: {
     flexDirection: 'row',
     height: 40,
@@ -196,10 +367,8 @@ const styles = StyleSheet.create({
   },
   buttonStyle: {
     backgroundColor: '#7DE24E',
-    borderWidth: 0,
     color: '#FFFFFF',
-    borderColor: '#7DE24E',
-    height: 40,
+    height: 45,
     alignItems: 'center',
     borderRadius: 30,
     marginLeft: 35,
@@ -208,9 +377,10 @@ const styles = StyleSheet.create({
     marginBottom: 25,
   },
   buttonTextStyle: {
-    color: '#FFFFFF',
+    color: 'black',
     paddingVertical: 10,
     fontSize: 16,
+    fontWeight: 'bold',
   },
   inputStyle: {
     flex: 1,
@@ -234,6 +404,45 @@ const styles = StyleSheet.create({
     color: 'red',
     textAlign: 'center',
     fontSize: 14,
+  },
+  images: {
+    width: 200,
+    height: 100,
+    marginHorizontal: '25%',
+    borderRadius: 10,
+  },
+  imagesDeleteButton: {
+    color: '#FFFFFF',
+    paddingTop: 10,
+    fontSize: 16,
+    marginHorizontal: '42%',
+  },
+  imagesUploadButtons: {
+    backgroundColor: '#9dddee',
+    borderColor: '#0a798d',
+    borderWidth: 1,
+    height: 35,
+    borderRadius: 10,
+    marginLeft: 50,
+    marginTop: 10,
+    marginBottom: 10,
+  },
+  ImageButtonTextStyle: {
+    color: 'black',
+    paddingVertical: 7,
+    paddingLeft: 5,
+    paddingRight: 5,
+    fontSize: 16,
+  },
+  mapViewStyle: {
+    // flex: 1,
+    height: 110,
+    width: 110,
+    justifyContent: 'center',
+    alignItems: 'center',
+    // textAlign: 'center',
+    // backgroundColor: 'purple',
+    // margin: 0,
   },
 });
 
