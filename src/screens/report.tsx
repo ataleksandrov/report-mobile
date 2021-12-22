@@ -111,7 +111,7 @@ const ReportScreen = ({navigation}) => {
                 <TextInput
                   style={styles.inputStyle}
                   multiline
-                  numberOfLines={4}
+                  numberOfLines={10}
                   onChangeText={() => {}} // todo change
                   placeholder="Въведи описание"
                   placeholderTextColor="#8b9cb5"
@@ -122,6 +122,7 @@ const ReportScreen = ({navigation}) => {
                   blurOnSubmit={false}
                 />
               </View>
+              <View style={styles.lineSeparatorViewStyle} />
               {/*  */}
               {/*  */}
               {/* Photo */}
@@ -165,6 +166,7 @@ const ReportScreen = ({navigation}) => {
                   <Text style={styles.ImageButtonTextStyle}>Отвори камера</Text>
                 </TouchableOpacity>
               </View>
+              <View style={styles.lineSeparatorViewStyle} />
               {/*  */}
               {/*  */}
               {/* Map */}
@@ -198,11 +200,16 @@ const ReportScreen = ({navigation}) => {
                       paddingBottom: 10,
                       // color: 'green',
                     }}>
-                    ({marker.longitude},{' '}{marker.latitude})
+                    ({marker.longitude}, {marker.latitude})
                   </Text>
                 </View>
               )}
-              <View style={{flexDirection: 'row', flexWrap: 'wrap', paddingLeft: '20%'}}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  flexWrap: 'wrap',
+                  paddingLeft: '20%',
+                }}>
                 <TouchableOpacity
                   activeOpacity={0.5}
                   style={styles.imagesUploadButtons}
@@ -262,6 +269,7 @@ const ReportScreen = ({navigation}) => {
               {/* Polution */}
               {/*  */}
               {/*  */}
+              <View style={styles.lineSeparatorViewStyle} />
               <Text
                 style={{
                   paddingLeft: 40,
@@ -293,6 +301,7 @@ const ReportScreen = ({navigation}) => {
               {/* Level */}
               {/*  */}
               {/*  */}
+              <View style={styles.lineSeparatorViewStyle} />
               <Text
                 style={{
                   paddingLeft: 40,
@@ -342,7 +351,8 @@ const headerStyles = StyleSheet.create({
     color: 'black',
     backgroundColor: '#0a798d',
     fontWeight: 'bold',
-    // paddingBottom: 10,
+    fontFamily: 'IowanOldStyle-Roman',
+    // paddingBottom: 10, Noteworthy MarkerFelt-Thin
     // textDecorationLine: 'underline',
   },
 });
@@ -423,7 +433,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     height: 35,
     borderRadius: 10,
-    marginLeft: 50,
+    marginLeft: 45,
     marginTop: 10,
     marginBottom: 10,
   },
@@ -443,6 +453,12 @@ const styles = StyleSheet.create({
     // textAlign: 'center',
     // backgroundColor: 'purple',
     // margin: 0,
+  },
+  lineSeparatorViewStyle: {
+    borderBottomColor: 'black',
+    borderBottomWidth: 2,
+    paddingTop: 20,
+    marginHorizontal: 30,
   },
 });
 
