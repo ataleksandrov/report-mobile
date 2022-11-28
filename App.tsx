@@ -23,11 +23,11 @@ export default function App() {
         <Stack.Screen name="Регистрация" component={Signup} options={{headerShown: false}}/>
         <Stack.Screen name="Вход" component={Signin} options={{headerShown: false}}/>
         <Stack.Screen
-          name="Navigation"
+          name="Сигнали"
           component={Navigation}
           options={{headerShown: false}}
         />
-        <Stack.Screen name="ReportDetails" component={ReportDetails} />
+        <Stack.Screen name="Детайли" component={ReportDetails} />
       </Stack.Navigator>
     </NavigationContainer>
   );

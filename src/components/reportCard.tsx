@@ -24,10 +24,10 @@ export function ReportCard({report}: ReportCardProps) {
     <Card
       elevation={5}
       style={styles.cardContainer}
-      onPress={() => navigate('ReportDetails', report)}>
+      onPress={() => navigate('Детайли', report)}>
       <Card.Cover
         source={{
-          uri: report.photos[0],
+          uri: report.photourl,
         }}
       />
       <Card.Title

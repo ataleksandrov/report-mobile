@@ -3,7 +3,7 @@ export interface Report {
   title: string;
   date: string;
   description: string;
-  photos: {}[];
+  photourl: string;
   userId: string;
   city: string;
   level: string;

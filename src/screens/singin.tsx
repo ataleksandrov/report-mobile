@@ -4,11 +4,12 @@ import {
   TextInput,
   View,
   Text,
-  ScrollView,
   Keyboard,
   TouchableOpacity,
   KeyboardAvoidingView,
+  AsyncStorage
 } from 'react-native';
+import Modal from 'react-native-modal';
 
 import Loader from '../components/loader';
 
@@ -17,26 +18,75 @@ const LoginScreen = ({navigation}) => {
   const [userPassword, setUserPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [errortext, setErrortext] = useState('');
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
-  const handleSubmitPress = () => {
+  const handleSubmitPress = async () => {
     setErrortext('');
     if (!userEmail) {
-      alert('Please fill Email');
+      // alert('Моля въведете Емейл');
       return;
     }
     if (!userPassword) {
-      alert('Please fill Password');
+      // alert('Моля въведете Парола');
       return;
     }
+
     setLoading(true);
-    setTimeout(() => {
+    try {
+      const base64 = require('base-64');
+      var headers = new Headers();
+      headers.append("Authorization", "Basic " + base64.encode(userEmail+':'+userPassword));
+      let response = await fetch('http://localhost:8080/v1/users', {
+        method: 'GET',
+        headers: headers,
+      });
+      if (!response.ok){
+        setLoading(false);
+        setIsModalVisible(true);
+        // setUserEmail('');
+        return;  
+      };
+      await AsyncStorage.setItem(
+        'email',
+        userEmail
+      );
+      await AsyncStorage.setItem(
+        'password',
+        userPassword
+      );
       setLoading(false);
-      navigation.navigate('Navigation');
-    }, 2000);
+      navigation.navigate('Сигнали');
+    } catch (error) {
+      setLoading(false);
+      setUserEmail('');
+
+      console.log("could not set email or pass");
+    }
   };
 
   return (
     <View style={styles.mainBody}>
+      <Modal
+        isVisible={isModalVisible}
+        onBackdropPress={() => setIsModalVisible(false)}
+        style={{}}>
+        <View style={{
+          height: '10%',
+          width: '80%',
+          backgroundColor: 'red',
+          borderRadius: 25,
+          borderWidth: 2,
+          borderColor: 'black',
+          marginLeft: '10%',
+        }}>
+          <Text style={{
+            fontSize: 15,
+            paddingBottom: '2%',
+            paddingTop: '8%',
+            fontWeight: 'bold',
+            textAlign: 'center',
+          }}>Грешен имейл или парола, моля опитайте отново</Text>
+          </View></Modal>
       <Loader loading={loading} />
       <Text style={headerStyles.title}>Вход</Text>
       <View

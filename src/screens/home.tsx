@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   ScrollView,
   Text,
@@ -6,6 +6,7 @@ import {
   View,
   Button,
   TouchableOpacity,
+  AsyncStorage,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import ReportList from '../components/reportList';
@@ -16,151 +17,151 @@ import {Report} from '../models/report';
 const HomeScreen = ({navigation}) => {
   // const { data: events } = useAsync(() => client.getEvents(), []);
   // todo add visible: true, after fetching from server
-  const reports: Report[] = [
-    {
-      reportId: 'id asd',
-      title: 'title asd',
-      date: '14.12.2021г.',
-      description:
-        'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry"s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
-      photos: [
-        'https://media.nationalgeographic.org/assets/photos/000/272/27281.jpg',
-      ],
-      userId: 'userId string',
-      city: 'Бургас',
-      level: 'low',
-    },
-    {
-      reportId: 'id asd 2',
-      title: 'title asd 2',
-      date: '13.12.2021г.',
-      description:
-        'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry"s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
-      photos: [
-        'https://www.genevaenvironmentnetwork.org/wp-content/uploads/2020/11/2019_0520-plastic-pollution-aspect-ratio-2000-1200-1024x614.jpg',
-      ],
-      userId: 'userId string',
-      city: 'Пловдив',
-      level: 'low',
-    },
-    {
-      reportId: 'id asd 3',
-      title: 'title asd 3',
-      date: '12.12.2021г.',
-      description:
-        'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry"s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
-      photos: [
-        'https://www.genevaenvironmentnetwork.org/wp-content/uploads/2020/11/2019_0520-plastic-pollution-aspect-ratio-2000-1200-1024x614.jpg',
-      ],
-      userId: 'userId string',
-      city: 'Варна',
-      level: 'high',
-    },
-    {
-      reportId: 'id asd 4',
-      title: 'title asd 4',
-      date: '13.12.2021г.',
-      description:
-        'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry"s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
-      photos: [
-        'https://www.genevaenvironmentnetwork.org/wp-content/uploads/2020/11/2019_0520-plastic-pollution-aspect-ratio-2000-1200-1024x614.jpg',
-      ],
-      userId: 'userId string',
-      city: 'София',
-      level: 'high',
-    },
-    {
-      reportId: 'id asd 5',
-      title: 'title asd 5',
-      date: '13.12.2021г.',
-      description:
-        'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry"s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
-      photos: [
-        'https://www.genevaenvironmentnetwork.org/wp-content/uploads/2020/11/2019_0520-plastic-pollution-aspect-ratio-2000-1200-1024x614.jpg',
-      ],
-      userId: 'userId string',
-      city: 'Бургас',
-      level: 'high',
-    },
-    {
-      reportId: 'id asd 6',
-      title: 'title asd 6',
-      date: '13.12.2021г.',
-      description:
-        'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry"s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
-      photos: [
-        'https://www.genevaenvironmentnetwork.org/wp-content/uploads/2020/11/2019_0520-plastic-pollution-aspect-ratio-2000-1200-1024x614.jpg',
-      ],
-      userId: 'userId string',
-      city: 'Пловдив',
-      level: 'medium',
-    },
-    {
-      reportId: 'id asd 7',
-      title: 'title asd 7',
-      date: '13.12.2021г.',
-      description:
-        'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry"s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
-      photos: [
-        'https://www.genevaenvironmentnetwork.org/wp-content/uploads/2020/11/2019_0520-plastic-pollution-aspect-ratio-2000-1200-1024x614.jpg',
-      ],
-      userId: 'userId string',
-      city: 'Варна',
-      level: 'medium',
-    },
-    {
-      reportId: 'id asd 8',
-      title: 'title asd 8',
-      date: '13.12.2021г.',
-      description:
-        'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry"s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
-      photos: [
-        'https://www.genevaenvironmentnetwork.org/wp-content/uploads/2020/11/2019_0520-plastic-pollution-aspect-ratio-2000-1200-1024x614.jpg',
-      ],
-      userId: 'userId string',
-      city: 'София',
-      level: 'medium',
-    },
-    {
-      reportId: 'id asd 9',
-      title: 'title asd 9',
-      date: '13.12.2021г.',
-      description:
-        'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry"s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
-      photos: [
-        'https://www.genevaenvironmentnetwork.org/wp-content/uploads/2020/11/2019_0520-plastic-pollution-aspect-ratio-2000-1200-1024x614.jpg',
-      ],
-      userId: 'userId string',
-      city: 'Бургас',
-      level: 'low',
-    },
-    {
-      reportId: 'id asd 10',
-      title: 'title asd 10',
-      date: '13.12.2021г.',
-      description:
-        'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry"s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
-      photos: [
-        'https://www.genevaenvironmentnetwork.org/wp-content/uploads/2020/11/2019_0520-plastic-pollution-aspect-ratio-2000-1200-1024x614.jpg',
-      ],
-      userId: 'userId string',
-      city: 'Бургас',
-      level: 'low',
-    },
-    {
-      reportId: 'id asd 11',
-      title: 'title asd 11',
-      date: '13.12.2021г.',
-      description:
-        'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry"s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
-      photos: [
-        'https://www.genevaenvironmentnetwork.org/wp-content/uploads/2020/11/2019_0520-plastic-pollution-aspect-ratio-2000-1200-1024x614.jpg',
-      ],
-      userId: 'userId string',
-      city: 'Бургас',
-      level: 'high',
-    },
-  ];
+  // const reports: Report[] = [
+  //   {
+  //     reportId: 'id asd',
+  //     title: 'title asd',
+  //     date: '14.12.2021г.',
+  //     description:
+  //       'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry"s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
+  //     photos: [
+  //       'https://media.nationalgeographic.org/assets/photos/000/272/27281.jpg',
+  //     ],
+  //     userId: 'userId string',
+  //     city: 'Бургас',
+  //     level: 'low',
+  //   },
+  //   {
+  //     reportId: 'id asd 2',
+  //     title: 'title asd 2',
+  //     date: '13.12.2021г.',
+  //     description:
+  //       'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry"s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
+  //     photos: [
+  //       'https://www.genevaenvironmentnetwork.org/wp-content/uploads/2020/11/2019_0520-plastic-pollution-aspect-ratio-2000-1200-1024x614.jpg',
+  //     ],
+  //     userId: 'userId string',
+  //     city: 'Пловдив',
+  //     level: 'low',
+  //   },
+  //   {
+  //     reportId: 'id asd 3',
+  //     title: 'title asd 3',
+  //     date: '12.12.2021г.',
+  //     description:
+  //       'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry"s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
+  //     photos: [
+  //       'https://www.genevaenvironmentnetwork.org/wp-content/uploads/2020/11/2019_0520-plastic-pollution-aspect-ratio-2000-1200-1024x614.jpg',
+  //     ],
+  //     userId: 'userId string',
+  //     city: 'Варна',
+  //     level: 'high',
+  //   },
+  //   {
+  //     reportId: 'id asd 4',
+  //     title: 'title asd 4',
+  //     date: '13.12.2021г.',
+  //     description:
+  //       'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry"s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
+  //     photos: [
+  //       'https://www.genevaenvironmentnetwork.org/wp-content/uploads/2020/11/2019_0520-plastic-pollution-aspect-ratio-2000-1200-1024x614.jpg',
+  //     ],
+  //     userId: 'userId string',
+  //     city: 'София',
+  //     level: 'high',
+  //   },
+  //   {
+  //     reportId: 'id asd 5',
+  //     title: 'title asd 5',
+  //     date: '13.12.2021г.',
+  //     description:
+  //       'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry"s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
+  //     photos: [
+  //       'https://www.genevaenvironmentnetwork.org/wp-content/uploads/2020/11/2019_0520-plastic-pollution-aspect-ratio-2000-1200-1024x614.jpg',
+  //     ],
+  //     userId: 'userId string',
+  //     city: 'Бургас',
+  //     level: 'high',
+  //   },
+  //   {
+  //     reportId: 'id asd 6',
+  //     title: 'title asd 6',
+  //     date: '13.12.2021г.',
+  //     description:
+  //       'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry"s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
+  //     photos: [
+  //       'https://www.genevaenvironmentnetwork.org/wp-content/uploads/2020/11/2019_0520-plastic-pollution-aspect-ratio-2000-1200-1024x614.jpg',
+  //     ],
+  //     userId: 'userId string',
+  //     city: 'Пловдив',
+  //     level: 'medium',
+  //   },
+  //   {
+  //     reportId: 'id asd 7',
+  //     title: 'title asd 7',
+  //     date: '13.12.2021г.',
+  //     description:
+  //       'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry"s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
+  //     photos: [
+  //       'https://www.genevaenvironmentnetwork.org/wp-content/uploads/2020/11/2019_0520-plastic-pollution-aspect-ratio-2000-1200-1024x614.jpg',
+  //     ],
+  //     userId: 'userId string',
+  //     city: 'Варна',
+  //     level: 'medium',
+  //   },
+  //   {
+  //     reportId: 'id asd 8',
+  //     title: 'title asd 8',
+  //     date: '13.12.2021г.',
+  //     description:
+  //       'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry"s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
+  //     photos: [
+  //       'https://www.genevaenvironmentnetwork.org/wp-content/uploads/2020/11/2019_0520-plastic-pollution-aspect-ratio-2000-1200-1024x614.jpg',
+  //     ],
+  //     userId: 'userId string',
+  //     city: 'София',
+  //     level: 'medium',
+  //   },
+  //   {
+  //     reportId: 'id asd 9',
+  //     title: 'title asd 9',
+  //     date: '13.12.2021г.',
+  //     description:
+  //       'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry"s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
+  //     photos: [
+  //       'https://www.genevaenvironmentnetwork.org/wp-content/uploads/2020/11/2019_0520-plastic-pollution-aspect-ratio-2000-1200-1024x614.jpg',
+  //     ],
+  //     userId: 'userId string',
+  //     city: 'Бургас',
+  //     level: 'low',
+  //   },
+  //   {
+  //     reportId: 'id asd 10',
+  //     title: 'title asd 10',
+  //     date: '13.12.2021г.',
+  //     description:
+  //       'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry"s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
+  //     photos: [
+  //       'https://www.genevaenvironmentnetwork.org/wp-content/uploads/2020/11/2019_0520-plastic-pollution-aspect-ratio-2000-1200-1024x614.jpg',
+  //     ],
+  //     userId: 'userId string',
+  //     city: 'Бургас',
+  //     level: 'low',
+  //   },
+  //   {
+  //     reportId: 'id asd 11',
+  //     title: 'title asd 11',
+  //     date: '13.12.2021г.',
+  //     description:
+  //       'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry"s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
+  //     photos: [
+  //       'https://www.genevaenvironmentnetwork.org/wp-content/uploads/2020/11/2019_0520-plastic-pollution-aspect-ratio-2000-1200-1024x614.jpg',
+  //     ],
+  //     userId: 'userId string',
+  //     city: 'Бургас',
+  //     level: 'high',
+  //   },
+  // ];
   // sort
   const [isSortModalVisible, setSortModalVisible] = useState(false);
   const [sortingProp, setSortingProp] = useState('');
@@ -174,7 +175,7 @@ const HomeScreen = ({navigation}) => {
   const [filterCity, setFilterCity] = useState('');
   const [filterLevel, setFilterLevel] = useState('');
 
-  const [data, setData] = useState(reports);
+  const [data, setData] = useState([]);
 
   const uniqueCities = [...new Set(data.map(x => x.city))].map(x => ({
     label: x,
@@ -184,6 +185,36 @@ const HomeScreen = ({navigation}) => {
     label: x,
     value: x,
   }));
+
+ 
+
+  const getReports = async () => {
+    try {
+      const email = await AsyncStorage.getItem('email');
+      const password = await AsyncStorage.getItem('password');
+      if (email === null || password === null) {
+        setData([]);
+        return;
+      }
+      const base64 = require('base-64');
+      var headers = new Headers();
+      headers.append("Authorization", "Basic " + base64.encode(email+':'+password));
+
+      const response = await fetch('http://localhost:8080/v1/reports', {
+      method: 'GET',
+      headers: headers,
+    });
+     const json = await response.json();
+     setData(json);
+   } catch (error) {
+     console.error(error);
+     setData([]);
+   }
+ }
+
+ useEffect(() => {
+  getReports();
+ }, []);
 
   return (
     <View style={{flex: 1, backgroundColor: '#0a798d'}}>
@@ -204,7 +235,7 @@ const HomeScreen = ({navigation}) => {
           }}
           iconStyle={{marginLeft: '50%', color: 'black'}}
           style={{
-            width: 207,
+            width: 194,
             flexDirection: 'row',
             flexWrap: 'wrap',
             alignSelf: 'flex-start',
@@ -220,7 +251,7 @@ const HomeScreen = ({navigation}) => {
           }}
           iconStyle={{marginLeft: '50%', color: 'black'}}
           style={{
-            width: 207,
+            width: 194,
             flexDirection: 'row',
             flexWrap: 'wrap',
             alignSelf: 'flex-start',

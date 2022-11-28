@@ -10,6 +10,7 @@ import {
   Image,
   Button,
   Modal,
+  AsyncStorage,
 } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import * as ImagePicker from 'react-native-image-picker';
@@ -22,6 +23,10 @@ const ReportScreen = ({navigation}) => {
     fileUri: '',
   };
   const [photo, setPhoto] = useState(emptyPhoto);
+
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+
 
   const [isMapModalVisible, setMapModalVisible] = useState(false);
   const [marker, setMarker] = useState({latitude: 1, longitude: 1});
@@ -97,6 +102,31 @@ const ReportScreen = ({navigation}) => {
           }}>
           <View>
             <KeyboardAvoidingView enabled>
+            <Text
+                style={{
+                  paddingLeft: 40,
+                  fontSize: 20,
+                  fontWeight: 'bold',
+                  paddingTop: 30,
+                }}>
+                Заглавие
+              </Text>
+              <View style={{alignItems: 'center'}} />
+              <View style={styles.SectionStyle}>
+                <TextInput
+                  ref={input => { this.titleInput = input }}
+                  style={styles.inputStyle}
+                  onChangeText={(title) => {setTitle(title)}} // todo change
+                  placeholder="Въведи заглавие"
+                  placeholderTextColor="#8b9cb5"
+                  autoCapitalize="none"
+                  keyboardType="default"
+                  returnKeyType="next"
+                  underlineColorAndroid="#f000"
+                  blurOnSubmit={false}
+                  clearButtonMode="always"
+                />
+              </View>
               <Text
                 style={{
                   paddingLeft: 40,
@@ -109,10 +139,11 @@ const ReportScreen = ({navigation}) => {
               <View style={{alignItems: 'center'}} />
               <View style={styles.SectionStyle}>
                 <TextInput
+                  ref={input => { this.descriptionInput = input }}
                   style={styles.inputStyle}
                   multiline
                   numberOfLines={4}
-                  onChangeText={() => {}} // todo change
+                  onChangeText={(description) => {setDescription(description)}} // todo change
                   placeholder="Въведи описание"
                   placeholderTextColor="#8b9cb5"
                   autoCapitalize="none"
@@ -120,6 +151,7 @@ const ReportScreen = ({navigation}) => {
                   returnKeyType="next"
                   underlineColorAndroid="#f000"
                   blurOnSubmit={false}
+                  clearButtonMode="always"
                 />
               </View>
               {/*  */}
@@ -322,7 +354,52 @@ const ReportScreen = ({navigation}) => {
               <TouchableOpacity
                 style={styles.buttonStyle}
                 activeOpacity={0.5}
-                onPress={() => {}}>
+                onPress={async () => {
+                    try {
+                      const email = await AsyncStorage.getItem('email');
+                      const password = await AsyncStorage.getItem('password');
+                      if (email === null || password === null) {
+                        navigation.navigate('Home');
+                        return;
+                      }
+                      const base64 = require('base-64');
+                      var headers = new Headers();
+                      headers.append("Authorization", "Basic " + base64.encode(email+':'+password));
+                
+                      const response = await fetch('http://localhost:8080/v1/reports', {
+                      method: 'POST',
+                      headers: headers,
+                      body: JSON.stringify({
+                        "id" :101, // todo set in server
+                        "title": title,
+                        "description": description,
+                        "photourl" :"https://media.nationalgeographic.org/assets/photos/000/272/27281.jpg",
+                        "city": "burgas", // todo set in server
+                        "level" :polutionLevel,
+                        "kind":polutionType,
+                        "coordinatex": marker.latitude,
+                        "coordinatey": marker.latitude,
+                        "status" :"in-progress", // todo set in server
+                        "reporter_id":1, // todo set in server
+                        "processor_id":1 // todo set in server
+                      }),
+                    });
+                    //  const json = await response.json();
+                     console.log("added");
+                     setTitle("");
+                     setDescription("");
+                     this.titleInput.clear();
+                     this.descriptionInput.clear();
+                     setPolutionLevel("");
+                     setPolutionType("");
+                     setMarker({latitude: 1, longitude: 1});
+                     
+                     navigation.navigate('Home');
+                   } catch (error) {
+                     console.error(error);
+                    //  navigation.navigate('Home');
+                   }
+                }}>
                 <Text style={styles.buttonTextStyle}>Сигнализирай</Text>
               </TouchableOpacity>
             </KeyboardAvoidingView>
