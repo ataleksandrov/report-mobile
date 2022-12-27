@@ -7,4 +7,5 @@ export interface Report {
   userId: string;
   city: string;
   level: string;
+  status: string;
 }

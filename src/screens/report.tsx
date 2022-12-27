@@ -11,6 +11,7 @@ import {
   Button,
   Modal,
   AsyncStorage,
+  Platform,
 } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import * as ImagePicker from 'react-native-image-picker';
@@ -20,7 +21,9 @@ import Loader from '../components/loader';
 
 const ReportScreen = ({navigation}) => {
   const emptyPhoto = {
-    fileUri: '',
+    uri: '',
+    fileName:'',
+    type: ''
   };
   const [photo, setPhoto] = useState(emptyPhoto);
 
@@ -54,7 +57,7 @@ const ReportScreen = ({navigation}) => {
       selectionLimit: 1,
     };
     ImagePicker.launchImageLibrary(options, response => {
-      console.log('Response = ', response);
+      // console.log('Response = ', response);
 
       if (response.didCancel) {
         console.log('User cancelled image picker');
@@ -62,10 +65,8 @@ const ReportScreen = ({navigation}) => {
         console.log('ImagePicker Error: ', response.errorMessage);
       } else {
         console.log('response', JSON.stringify(response));
-        setPhoto({
-          fileUri: response.assets[0].uri,
-        });
-        console.log(photo);
+        setPhoto(response.assets[0]);
+        console.log(response.assets[0]);
       }
     });
   };
@@ -75,7 +76,7 @@ const ReportScreen = ({navigation}) => {
       mediaType: 'photo',
     };
     ImagePicker.launchCamera(options, response => {
-      console.log('Response = ', response);
+      // console.log('Response = ', response);
 
       if (response.didCancel) {
         console.log('User cancelled image picker');
@@ -83,12 +84,23 @@ const ReportScreen = ({navigation}) => {
         console.log('ImagePicker Error: ', response.errorMessage);
       } else {
         console.log('response', JSON.stringify(response));
-        setPhoto({
-          fileUri: response.assets[0].uri,
-        });
+        setPhoto(response);
         console.log(photo);
       }
     });
+  };
+
+
+  const createFormData = (selectedPhoto, body = {}) => {
+    const data = new FormData();
+
+    data.append('photo', {
+      name: selectedPhoto.fileName,
+      type: selectedPhoto.type,
+      uri: Platform.OS === 'ios' ? selectedPhoto.uri.replace('file://', '') : selectedPhoto.uri,
+    });
+
+    return data;
   };
 
   return (
@@ -169,9 +181,10 @@ const ReportScreen = ({navigation}) => {
                 }}>
                 Снимка
               </Text>
-              {photo.fileUri !== '' && (
+              {
+               photo.uri !== '' && (
                 <View>
-                  <Image source={{uri: photo.fileUri}} style={styles.images} />
+                  <Image source={{uri: photo.uri}} style={styles.images} />
                   <TouchableOpacity
                     activeOpacity={0.5}
                     onPress={() => {
@@ -356,38 +369,47 @@ const ReportScreen = ({navigation}) => {
                 activeOpacity={0.5}
                 onPress={async () => {
                     try {
-                      const email = await AsyncStorage.getItem('email');
-                      const password = await AsyncStorage.getItem('password');
-                      if (email === null || password === null) {
-                        navigation.navigate('Home');
-                        return;
-                      }
-                      const base64 = require('base-64');
+                      const token = await AsyncStorage.getItem('token');
                       var headers = new Headers();
-                      headers.append("Authorization", "Basic " + base64.encode(email+':'+password));
+                      headers.append("Token", token);
                 
+
+                      const data = new FormData();
+                      data.append('photo', {
+                        name: photo.fileName,
+                        type: photo.type,
+                        uri: Platform.OS === 'ios' ? photo.uri.replace('file://', '') : photo.uri,
+                      });
+                      const photoResp = await fetch("http://localhost:8080/v1/photos", {
+                        method: 'POST',
+                        headers: headers,
+                        body: data
+                      });
+
+
                       const response = await fetch('http://localhost:8080/v1/reports', {
                       method: 'POST',
                       headers: headers,
                       body: JSON.stringify({
-                        "id" :101, // todo set in server
+                        // "id" :108, // todo set in server
                         "title": title,
                         "description": description,
-                        "photourl" :"https://media.nationalgeographic.org/assets/photos/000/272/27281.jpg",
-                        "city": "burgas", // todo set in server
+                        "photourl" :"http://localhost:8080/v1/photos/"+ photo.fileName,
+                        // "city": "burgas", // todo set in server
                         "level" :polutionLevel,
                         "kind":polutionType,
-                        "coordinatex": marker.latitude,
+                        "coordinatex": marker.longitude,
                         "coordinatey": marker.latitude,
-                        "status" :"in-progress", // todo set in server
-                        "reporter_id":1, // todo set in server
-                        "processor_id":1 // todo set in server
+                        // "status" :"in-progress", // todo set in server
+                        // "reporter_id":1, // todo set in server
+                        // "processor_id":1 // todo set in server
                       }),
                     });
                     //  const json = await response.json();
                      console.log("added");
                      setTitle("");
                      setDescription("");
+                     setPhoto(emptyPhoto);
                      this.titleInput.clear();
                      this.descriptionInput.clear();
                      setPolutionLevel("");

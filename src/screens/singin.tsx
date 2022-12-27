@@ -36,30 +36,26 @@ const LoginScreen = ({navigation}) => {
       const base64 = require('base-64');
       var headers = new Headers();
       headers.append("Authorization", "Basic " + base64.encode(userEmail+':'+userPassword));
-      let response = await fetch('http://localhost:8080/v1/users', {
-        method: 'GET',
+      let response = await fetch('http://localhost:8080/v1/login', {
+        method: 'POST',
         headers: headers,
       });
       if (!response.ok){
         setLoading(false);
         setIsModalVisible(true);
-        // setUserEmail('');
         return;  
       };
+      let data = await response.json();
       await AsyncStorage.setItem(
-        'email',
-        userEmail
-      );
-      await AsyncStorage.setItem(
-        'password',
-        userPassword
+        'token',
+        data.token
       );
       setLoading(false);
       navigation.navigate('Сигнали');
     } catch (error) {
       setLoading(false);
       setUserEmail('');
-
+      console.log(error);
       console.log("could not set email or pass");
     }
   };

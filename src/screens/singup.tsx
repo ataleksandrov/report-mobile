@@ -20,30 +20,47 @@ const Signup = (props: {navigation: {navigate: (arg0: string) => void}}) => {
   const [errortext, setErrortext] = useState('');
   const [isRegistraionSuccess, setIsRegistraionSuccess] = useState(false);
 
-  const handleSubmitButton = () => {
+  const handleSubmitButton = async () => {
     setErrortext('');
     if (!userName) {
-      alert('Please fill Name');
+      alert('Моля въведете име');
       return;
     }
     if (!userEmail) {
-      alert('Please fill Email');
+      alert('Моля въведете имейл');
       return;
     }
     if (!userPassword) {
-      alert('Please fill Password');
+      alert('Моля въведете парола');
       return;
     }
     //Show Loader
     setLoading(true);
-    // var dataToSend = {
-    //   name: userName,
-    //   email: userEmail,
-    //   password: userPassword,
-    // };
-    setTimeout(() => {
-      setIsRegistraionSuccess(true);
-    }, 2000);
+    var dataToSend = {
+      name: userName,
+      email: userEmail,
+      password: userPassword,
+    };
+    try {
+    let response = await fetch('http://localhost:8080/v1/users', {
+        method: 'POST',
+        body: JSON.stringify(dataToSend) 
+    });
+    if (!response.ok){
+      setLoading(false);
+      setUserEmail('');
+      setUserPassword('');
+      return;  
+    };
+    setLoading(false);
+    setIsRegistraionSuccess(true);
+  }catch (error) {
+    setLoading(false);
+    setUserEmail('');
+    setUserPassword('');
+    console.log(error);
+    console.log("could not set email or pass");
+  }
   };
 
   if (isRegistraionSuccess) {

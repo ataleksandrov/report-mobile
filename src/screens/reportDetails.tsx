@@ -36,13 +36,20 @@ const styles = StyleSheet.create({
   },
 });
 
+const statusMap = {
+  "new": "Нов",
+  "in-progress": "Предаден на екип",
+  "done": "Завършен"
+}
+
 export default function ReportDetails(nav: {route: {params: Report}}) {
   const report = nav.route.params;
-  console.log(report.photourl);
   return (
     <View style={{flex: 1, backgroundColor: '#f0f8ff'}}>
       <ScrollView style={styles.container}>
         <Image style={styles.image} source={{uri: report.photourl}} />
+        <Text style={styles.date}>РИОС: {report.city}</Text>
+        <Text style={styles.date}>Статус: {statusMap[report.status]}</Text>
         <Text style={styles.date}>{report.date}</Text>
         <Text style={styles.title}>{report.title}</Text>
         <Text style={styles.description}>
