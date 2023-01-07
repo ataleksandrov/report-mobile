@@ -20,6 +20,8 @@ const styles = StyleSheet.create({
 
 export function ReportCard({report}: ReportCardProps) {
   const {navigate} = useNavigation();
+  var date = new Date(report.date);
+  let reportDate = date.getFullYear()+'/' +date.getMonth()+'/' +date.getDate();
   return (
     <Card
       elevation={5}
@@ -32,7 +34,7 @@ export function ReportCard({report}: ReportCardProps) {
       />
       <Card.Title
         title={report.title}
-        subtitle={report.date + ' ' + report.level}
+        subtitle={reportDate + ' ' + report.level}
       />
     </Card>
   );

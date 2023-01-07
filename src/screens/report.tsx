@@ -372,37 +372,31 @@ const ReportScreen = ({navigation}) => {
                       const token = await AsyncStorage.getItem('token');
                       var headers = new Headers();
                       headers.append("Token", token);
-                
-
+                      
                       const data = new FormData();
                       data.append('photo', {
                         name: photo.fileName,
                         type: photo.type,
                         uri: Platform.OS === 'ios' ? photo.uri.replace('file://', '') : photo.uri,
                       });
-                      const photoResp = await fetch("http://localhost:8080/v1/photos", {
+                      const photoResp = await fetch("http://192.168.0.100:8080/v1/photos", {
                         method: 'POST',
                         headers: headers,
                         body: data
                       });
 
 
-                      const response = await fetch('http://localhost:8080/v1/reports', {
+                      const response = await fetch('http://192.168.0.100:8080/v1/reports', {
                       method: 'POST',
                       headers: headers,
                       body: JSON.stringify({
-                        // "id" :108, // todo set in server
                         "title": title,
                         "description": description,
-                        "photourl" :"http://localhost:8080/v1/photos/"+ photo.fileName,
-                        // "city": "burgas", // todo set in server
+                        "photourl" :"http://192.168.0.100:8080/v1/photos/"+ photo.fileName,
                         "level" :polutionLevel,
                         "kind":polutionType,
-                        "coordinatex": marker.longitude,
-                        "coordinatey": marker.latitude,
-                        // "status" :"in-progress", // todo set in server
-                        // "reporter_id":1, // todo set in server
-                        // "processor_id":1 // todo set in server
+                        "coordinatex": marker.latitude,
+                        "coordinatey": marker.longitude,
                       }),
                     });
                     //  const json = await response.json();

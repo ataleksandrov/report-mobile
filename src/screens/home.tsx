@@ -7,6 +7,7 @@ import {
   Button,
   TouchableOpacity,
   AsyncStorage,
+  RefreshControl
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import ReportList from '../components/reportList';
@@ -46,7 +47,7 @@ const HomeScreen = ({navigation}) => {
       var headers = new Headers();
       headers.append("Token", token);
 
-      const response = await fetch('http://localhost:8080/v1/reports', {
+      const response = await fetch('http://192.168.0.100:8080/v1/reports', {
       method: 'GET',
       headers: headers,
     });
@@ -60,6 +61,13 @@ const HomeScreen = ({navigation}) => {
 
  useEffect(() => {
   getReports();
+ }, []);
+
+ const [refreshing, setRefreshing] = React.useState(false);
+ const onRefresh = React.useCallback(async () => {
+   setRefreshing(true);
+   await getReports();
+   setRefreshing(false);
  }, []);
 
   return (
@@ -107,6 +115,10 @@ const HomeScreen = ({navigation}) => {
         />
       </View>
       <ScrollView>
+      <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+          />
         {
           // durty workaround, as child is not reloaded after parent state change
           data

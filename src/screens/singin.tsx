@@ -36,7 +36,7 @@ const LoginScreen = ({navigation}) => {
       const base64 = require('base-64');
       var headers = new Headers();
       headers.append("Authorization", "Basic " + base64.encode(userEmail+':'+userPassword));
-      let response = await fetch('http://localhost:8080/v1/login', {
+      let response = await fetch('http://192.168.0.100:8080/v1/login', {
         method: 'POST',
         headers: headers,
       });

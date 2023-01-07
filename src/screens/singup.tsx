@@ -42,7 +42,7 @@ const Signup = (props: {navigation: {navigate: (arg0: string) => void}}) => {
       password: userPassword,
     };
     try {
-    let response = await fetch('http://localhost:8080/v1/users', {
+    let response = await fetch('http://192.168.0.100:8080/v1/users', {
         method: 'POST',
         body: JSON.stringify(dataToSend) 
     });
