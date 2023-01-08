@@ -7,13 +7,17 @@ import {
   Button,
   TouchableOpacity,
   AsyncStorage,
-  RefreshControl
+  RefreshControl,
+  LogBox
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import ReportList from '../components/reportList';
 import Modal from 'react-native-modal';
 import DropDownPicker from 'react-native-dropdown-picker';
 import {Report} from '../models/report';
+
+LogBox.ignoreLogs(["Require cycle:", "Remote debugger", "AsyncStorage has been extracted from react-native core"]);
+
 
 const HomeScreen = ({navigation}) => {
   const [isSortModalVisible, setSortModalVisible] = useState(false);
@@ -89,7 +93,7 @@ const HomeScreen = ({navigation}) => {
           }}
           iconStyle={{marginLeft: '50%', color: 'black'}}
           style={{
-            width: 194,
+            width: 207,
             flexDirection: 'row',
             flexWrap: 'wrap',
             alignSelf: 'flex-start',
@@ -105,7 +109,7 @@ const HomeScreen = ({navigation}) => {
           }}
           iconStyle={{marginLeft: '50%', color: 'black'}}
           style={{
-            width: 194,
+            width: 207,
             flexDirection: 'row',
             flexWrap: 'wrap',
             alignSelf: 'flex-start',

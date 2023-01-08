@@ -29,7 +29,7 @@ const ReportScreen = ({navigation}) => {
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-
+  const [loading, setLoading] = useState(false);
 
   const [isMapModalVisible, setMapModalVisible] = useState(false);
   const [marker, setMarker] = useState({latitude: 1, longitude: 1});
@@ -39,6 +39,9 @@ const ReportScreen = ({navigation}) => {
 
   const [typePickerVisible, setTypePickerVisible] = useState(false);
   const [levelPickerVisible, setLevelPickerVisible] = useState(false);
+
+  const [duplicate, setDuplicate] = useState('');
+
 
   var polutionTypes = [
     {value: 'Битови', label: 'Битови'},
@@ -102,6 +105,69 @@ const ReportScreen = ({navigation}) => {
 
     return data;
   };
+
+  async function uploadReport (force){
+    setLoading(true);
+    try {
+      const token = await AsyncStorage.getItem('token');
+      var headers = new Headers();
+      headers.append("Token", token);
+      if(force){
+        headers.append("Force", true);
+      } 
+
+      const data = new FormData();
+      data.append('photo', {
+        name: photo.fileName,
+        type: photo.type,
+        uri: Platform.OS === 'ios' ? photo.uri.replace('file://', '') : photo.uri,
+      });
+      const photoResp = await fetch("http://192.168.0.100:8080/v1/photos", {
+        method: 'POST',
+        headers: headers,
+        body: data
+      });
+
+
+      const response = await fetch('http://192.168.0.100:8080/v1/reports', {
+      method: 'POST',
+      headers: headers,
+      body: JSON.stringify({
+        "title": title,
+        "description": description,
+        "photourl" :"http://192.168.0.100:8080/v1/photos/"+ photo.fileName,
+        "level" :polutionLevel,
+        "kind":polutionType,
+        "coordinatex": marker.latitude,
+        "coordinatey": marker.longitude,
+      })});
+
+      if (response.status === 409){
+        const json = await response.json();
+        setDuplicate(json.id);
+        setLoading(false);
+        return;
+      }
+       console.log("added");
+       setTitle("");
+       setDescription("");
+       setPhoto(emptyPhoto);
+       this.titleInput.clear();
+       this.descriptionInput.clear();
+       setPolutionLevel("");
+       setPolutionType("");
+       setMarker({latitude: 1, longitude: 1});
+       if (force){
+        setDuplicate('');
+       }
+       setLoading(false);
+
+       navigation.navigate('Home');
+     } catch (error) {
+       console.error(error);
+      //  navigation.navigate('Home');
+     }
+  }
 
   return (
     <View style={styles.mainView}>
@@ -368,58 +434,146 @@ const ReportScreen = ({navigation}) => {
                 style={styles.buttonStyle}
                 activeOpacity={0.5}
                 onPress={async () => {
-                    try {
-                      const token = await AsyncStorage.getItem('token');
-                      var headers = new Headers();
-                      headers.append("Token", token);
-                      
-                      const data = new FormData();
-                      data.append('photo', {
-                        name: photo.fileName,
-                        type: photo.type,
-                        uri: Platform.OS === 'ios' ? photo.uri.replace('file://', '') : photo.uri,
-                      });
-                      const photoResp = await fetch("http://192.168.0.100:8080/v1/photos", {
-                        method: 'POST',
-                        headers: headers,
-                        body: data
-                      });
-
-
-                      const response = await fetch('http://192.168.0.100:8080/v1/reports', {
-                      method: 'POST',
-                      headers: headers,
-                      body: JSON.stringify({
-                        "title": title,
-                        "description": description,
-                        "photourl" :"http://192.168.0.100:8080/v1/photos/"+ photo.fileName,
-                        "level" :polutionLevel,
-                        "kind":polutionType,
-                        "coordinatex": marker.latitude,
-                        "coordinatey": marker.longitude,
-                      }),
-                    });
-                    //  const json = await response.json();
-                     console.log("added");
-                     setTitle("");
-                     setDescription("");
-                     setPhoto(emptyPhoto);
-                     this.titleInput.clear();
-                     this.descriptionInput.clear();
-                     setPolutionLevel("");
-                     setPolutionType("");
-                     setMarker({latitude: 1, longitude: 1});
-                     
-                     navigation.navigate('Home');
-                   } catch (error) {
-                     console.error(error);
-                    //  navigation.navigate('Home');
-                   }
+                  uploadReport(false);
                 }}>
                 <Text style={styles.buttonTextStyle}>Сигнализирай</Text>
               </TouchableOpacity>
             </KeyboardAvoidingView>
+            <Modal
+              visible={duplicate!=''}
+              // onBackdropPress={() => setDuplicate('')}
+              style={{
+                height: '100vh',
+                width: '100vd',
+                backgroundColor: '#0a798d',
+              }}>
+              <View style={{
+                height: '100%',
+                width: '100%',
+                backgroundColor: '#0a798d',
+                borderRadius: 25,
+                borderWidth: 2,
+                borderColor: 'black',
+
+              }}>
+                 <Text style={{
+                  fontSize: 20,
+                  paddingBottom: '2%',
+                  marginTop: '45%',
+                  fontWeight: 'bold',
+                  textAlign: 'center',
+                }}>{"Внимание!"}</Text>
+                 <Text style={{
+                  fontSize: 20,
+                  paddingBottom: '2%',
+                  fontWeight: 'bold',
+                  textAlign: 'center',
+                }}>{"Вече същестува сигнал в радиус от 500 метра."}</Text>
+                 <View
+                style={{
+                  // fontSize: 25,
+                  // paddingBottom: '2%',
+                  marginTop: '6%',
+                  fontWeight: 'bold',
+                  textAlign: 'center',
+                  borderRadius: 25,
+                  borderWidth: 2,
+                  borderColor: 'black',
+                  width: '70%',
+                  marginLeft: '15%'
+                }}>
+                <Loader loading={loading} />
+                <Button 
+                style={{
+                  fontSize: 15,
+                  // paddingBottom: '2%',
+                  // paddingTop: '8%',
+                  fontWeight: 'bold',
+                  textAlign: 'center',
+                  borderRadius: 25,
+                  borderWidth: 2,
+                  borderColor: 'black',
+                }} 
+                color="black"
+                title={"Прегледай"} 
+                onPress={async () => {
+                  setLoading(true);
+                  const token = await AsyncStorage.getItem('token');
+                  var headers = new Headers();
+                  headers.append("Token", token);
+                  const response = await fetch("http://192.168.0.100:8080/v1/reports/"+ duplicate, {
+                    method: 'GET',
+                    headers: headers});
+                  let report = await response.json();
+                  setDuplicate('');
+                  setLoading(false);
+                  navigation.navigate('Детайли', report);
+                }}/>
+                </View>
+                <View
+                style={{
+                  // fontSize: 25,
+                  // paddingBottom: '2%',
+                  marginTop: '6%',
+                  fontWeight: 'bold',
+                  textAlign: 'center',
+                  borderRadius: 25,
+                  borderWidth: 2,
+                  borderColor: 'black',
+                  width: '70%',
+                  marginLeft: '15%'
+                }}>
+                <Button 
+                style={{
+                  fontSize: 15,
+                  paddingBottom: '2%',
+                  paddingTop: '8%',
+                  fontWeight: 'bold',
+                  textAlign: 'center',
+                  borderRadius: 25,
+                  borderWidth: 2,
+                  borderColor: 'black',
+                }}
+                color="black"
+                title={"Добави"} 
+                onPress={async () => {
+                  uploadReport(true);
+                }}/>
+                </View>
+                <View
+                style={{
+                  // fontSize: 25,
+                  // paddingBottom: '2%',
+                  marginTop: '6%',
+                  fontWeight: 'bold',
+                  textAlign: 'center',
+                  borderRadius: 25,
+                  borderWidth: 2,
+                  borderColor: 'black',
+                  width: '70%',
+                  marginLeft: '15%'
+                }}>
+                <Button 
+                title={"Назад"} 
+                color="black"
+                onPress={async () => {
+                  setDuplicate('');
+                  setTitle("");
+                  setDescription("");
+                  setPhoto(emptyPhoto);
+                  this.titleInput.clear();
+                  this.descriptionInput.clear();
+                  setPolutionLevel("");
+                  setPolutionType("");
+                  setMarker({latitude: 1, longitude: 1});
+                  navigation.navigate('Home');
+                }}/>
+                </View>
+                </View>
+              </Modal>
           </View>
+          <Loader loading={loading} />
+
         </ScrollView>
       </ScrollView>
     </View>

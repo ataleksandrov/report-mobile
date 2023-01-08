@@ -5,6 +5,9 @@ import HomeScreen from './home';
 import ReportScreen from './report';
 import MobileMap from './map';
 
+import { enableScreens } from 'react-native-screens';
+enableScreens();
+
 const Navigation = () => {
   const User = createMaterialBottomTabNavigator();
 

@@ -18,7 +18,7 @@ export default function ReportList({reports}: ReportListProps) {
   return (
     <View style={{marginTop: 4}}>
       {reports.map(report => (
-        <View key={report.reportId} style={styles.margin}>
+        <View key={report.id} style={styles.margin}>
           <ReportCard report={report} />
         </View>
       ))}

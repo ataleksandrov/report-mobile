@@ -1,6 +1,7 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {ScrollView, StyleSheet, Text, Image, View} from 'react-native';
 import {Report} from '../models/report';
+import Loader from '../components/loader';
 
 const styles = StyleSheet.create({
   container: {
@@ -42,30 +43,29 @@ const statusMap = {
   "done": "Завършен"
 }
 
+
 export default function ReportDetails(nav: {route: {params: Report}}) {
+  const [loading, setLoading] = useState(false);
   const report = nav.route.params;
   var date = new Date(report.date);
   let reportDate = date.getFullYear()+'/' +date.getMonth()+'/' +date.getDate();
   return (
     <View style={{flex: 1, backgroundColor: '#f0f8ff'}}>
       <ScrollView style={styles.container}>
-        <Image style={styles.image} source={{uri: report.photourl}} />
+        <Image 
+        style={styles.image} 
+        source={{uri: report.photourl}} 
+        onLoadStart={() => setLoading(true)}
+        onLoadEnd={() => setLoading(false)}
+        />
+        <Loader loading={loading} />
+
         <Text style={styles.date}>РИОС: {report.city}</Text>
         <Text style={styles.date}>Статус: {statusMap[report.status]}</Text>
         <Text style={styles.date}>Получен на: {reportDate}</Text>
         <Text style={styles.title}>{report.title}</Text>
         <Text style={styles.description}>
-          {report.description +
-            report.description +
-            report.description +
-            report.description +
-            report.description +
-            report.description +
-            report.description +
-            report.description +
-            report.description +
-            report.description +
-            report.description}
+          {report.description}
         </Text>
       </ScrollView>
     </View>
