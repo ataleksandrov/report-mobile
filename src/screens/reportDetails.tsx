@@ -48,7 +48,11 @@ export default function ReportDetails(nav: {route: {params: Report}}) {
   const [loading, setLoading] = useState(false);
   const report = nav.route.params;
   var date = new Date(report.date);
-  let reportDate = date.getFullYear()+'/' +date.getMonth()+'/' +date.getDate();
+  var mounth = date.getMonth()+1
+  if (mounth <= 9){
+    mounth = "0"+ mounth;
+  }
+  let reportDate = date.getFullYear()+'/' +mounth+'/' +date.getDate();
   return (
     <View style={{flex: 1, backgroundColor: '#f0f8ff'}}>
       <ScrollView style={styles.container}>

@@ -37,9 +37,9 @@ const Signup = (props: {navigation: {navigate: (arg0: string) => void}}) => {
     //Show Loader
     setLoading(true);
     var dataToSend = {
-      name: userName,
-      email: userEmail,
-      password: userPassword,
+      "username": userName,
+      "email": userEmail,
+      "password": userPassword,
     };
     try {
     let response = await fetch('http://192.168.0.100:8080/v1/users', {

@@ -67,9 +67,7 @@ const ReportScreen = ({navigation}) => {
       } else if (response.errorCode) {
         console.log('ImagePicker Error: ', response.errorMessage);
       } else {
-        console.log('response', JSON.stringify(response));
         setPhoto(response.assets[0]);
-        console.log(response.assets[0]);
       }
     });
   };
@@ -86,9 +84,7 @@ const ReportScreen = ({navigation}) => {
       } else if (response.errorCode) {
         console.log('ImagePicker Error: ', response.errorMessage);
       } else {
-        console.log('response', JSON.stringify(response));
-        setPhoto(response);
-        console.log(photo);
+        setPhoto(response.assets[0]);
       }
     });
   };

@@ -21,7 +21,11 @@ const styles = StyleSheet.create({
 export function ReportCard({report}: ReportCardProps) {
   const {navigate} = useNavigation();
   var date = new Date(report.date);
-  let reportDate = date.getFullYear()+'/' +date.getMonth()+'/' +date.getDate();
+  var mounth = date.getMonth()+1
+  if (mounth <= 9){
+    mounth = "0"+ mounth;
+  }
+  let reportDate = date.getFullYear()+'/' +mounth+'/' +date.getDate();
   return (
     <Card
       elevation={5}
